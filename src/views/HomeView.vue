@@ -1,9 +1,9 @@
-<script setup>
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
-
 <template>
-  <main>
-    <TheWelcome />
-  </main>
+    <!-- Untuk menampung page Home -->
 </template>
+
+<script>
+export default {
+    name: 'HomeView'
+}
+</script>

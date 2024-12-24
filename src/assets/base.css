@@ -108,7 +108,7 @@ th, td {
 
 /* Styling Baris Tabel */
 tbody tr {
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #0e0c0c;
 }
 
 /* Baris Genap dengan Warna Berbeda */
@@ -118,7 +118,7 @@ tbody tr:nth-of-type(even) {
 
 /* Warna Khusus Baris Terakhir */
 tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
+  border-bottom: 2px solid #000000;
 }
 
 /* Hover Effect untuk Baris */
@@ -129,5 +129,5 @@ tbody tr:hover {
 /* Styling Khusus untuk Baris Aktif */
 tbody tr.active-row {
   font-weight: bold;
-  color: #009879;
+  color: #000000;
 }
