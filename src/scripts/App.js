@@ -19,12 +19,22 @@ export default {
     return {
       isConnected: false,
       isTyping: false,
-      chat: {},
+      chats: [],
+      Message: {
+        'id': null,
+        'content': '',
+        'timestamp': null,
+        'isTyping': false,
+        'isError': null,
+        'isLike': false,
+        'isDislike': false
+      },
       question: '',
       messages: [], // Array untuk menyimpan pesan
       items: [],
-      socket: io("http://192.168.150.52:5000"), //Diganti dengan IP server (bisa berubah-ubah)
-      response: ''
+      socket: io("http://192.168.37.52:5000"), //Diganti dengan IP server (bisa berubah-ubah)
+      response: '',
+      disableChatbox: false
     };
   },
   methods: {
@@ -37,21 +47,6 @@ export default {
       this.socket.on('disconnect', () => {
         this.isConnected = false;
         console.log('Socket disconnected');
-      });
-    },
-    receiveStreamingResponse() {
-      this.socket.on('streaming_response', (data) => {
-        this.isTyping = false
-        console.log('Potongan pesan diterima: ', data);
-
-        // Menambahkan potongan kalimat atau kata baru ke bot_message
-        const lastMessage = this.messages[this.messages.length - 1];
-        lastMessage.bot_message += data.data; // Menambahkan potongan ke pesan yang ada
-
-        // Scroll ke bawah setiap kali ada update
-        this.$nextTick(() => {
-          this.scrollToBottom();
-        });
       });
     },
     resetTextarea() {
@@ -71,13 +66,25 @@ export default {
         
         // Simpan pertanyaan yang asli ke dalam variabel sementara
         const questionToSend = this.question;
-    
-        // Menambahkan pertanyaan ke array messages
-        this.messages.push({
-          user_message: this.question,  // Menambahkan pesan user
-          bot_message: '', // Pesan sementara hingga bot merespon
+
+        const userMessage = { ...this.Message };
+        userMessage.id = this.chats.length + 1;
+        userMessage.content = questionToSend;
+        userMessage.timestamp = new Date().toISOString();
+        console.log("Ini user message", userMessage);
+
+        const botMessage = { ...this.Message };
+        botMessage.id = this.chats.length + 1;
+        console.log("Ini bot message", botMessage);
+ 
+        this.chats.push({
+          user_message: userMessage,
+          bot_message: botMessage
         });
-    
+        
+
+        console.log("Ini chat", this.chats.botMessage);
+
         this.question = ''; // Reset input field setelah menambahkan pesan
         this.resetTextarea();
         
@@ -86,33 +93,44 @@ export default {
           this.scrollToBottom();
         });
     
-        // Set status mengetik
-        this.isTyping = true;
+        this.response = '';
 
         // Pesan ketika server tidak terhubung
         if (!this.isConnected) {
           const errorText = "Maaf sepertinya server Akasha sedang gangguan, mohon menunggu beberapa saat";
-          this.messages[this.messages.length - 1].bot_message = ""; // Awal teks kosong
-          this.isTyping = false;
-        
+
           let currentIndex = 0;
-        
+          const botMessageIndex = this.chats.length - 1;
+          this.chats[botMessageIndex].bot_message.isTyping = true; // Reset teks pesan bot
+          this.disableChatbox = true; // Menonaktifkan textarea selama bot mengetik
           const interval = setInterval(() => {
-            // Tambahkan 5 karakter ke pesan
-            this.messages[this.messages.length - 1].bot_message += errorText.slice(currentIndex, currentIndex + 5);
-            currentIndex += 5;
-        
+            // Tambahkan 5 karakter ke pesan bot
+            const chunkLength = 3;
+            this.chats[botMessageIndex].bot_message.content += errorText.slice(currentIndex, currentIndex + chunkLength);
+            currentIndex += chunkLength;
+
+            console.log("Pesan bot selesai:", JSON.stringify(this.chats[botMessageIndex].bot_message));
+
             // Jika sudah selesai menampilkan seluruh teks, hentikan interval
             if (currentIndex >= errorText.length) {
               clearInterval(interval);
+
+              // Atur isTyping menjadi false setelah selesai mengetik
+              this.chats[botMessageIndex].bot_message.isTyping = false;
+              this.disableChatbox = false; // Aktifkan textarea setelah bot selesai mengetik
+
+              // Pastikan UI diperbarui
+              this.$nextTick(() => {
+                console.log("isTyping sudah menjadi false:", this.chats[botMessageIndex].bot_message.isTyping);
+              });
             }
-        
+
             // Scroll ke bawah setiap kali teks diperbarui
             this.$nextTick(() => {
               this.scrollToBottom();
             });
           }, 100); // Interval waktu dalam milidetik (100ms = 0.1 detik)
-        
+          
           return;
         }
         
@@ -120,10 +138,12 @@ export default {
         try {
           // Kirimkan pesan ke server
           this.socket.emit('send_message', {"message": questionToSend});
+          const botMessageIndex = this.chats.length - 1;
+          this.chats[botMessageIndex].bot_message.isTyping = true; // Reset teks pesan bot
+          this.disableChatbox = true; // Menonaktifkan textarea selama bot mengetik
         } catch (error) {
           this.messages[this.messages.length - 1].bot_message = "Maaf sepertinya server Akasha sedang gangguan, mohon menunggu beberapa saat";
           console.error('Terjadi kesalahan saat mengirim permintaan:', error);
-          this.isTyping = false;
         }
       } else {
         // Tampilkan pesan error atau beri tahu pengguna bahwa input tidak boleh kosong
@@ -144,25 +164,31 @@ export default {
     this.connectSocket();
 
     this.socket.on('response', (json) => {
-      console.log(json.data);
+      console.log("Hasil JSON: ",json);
       
       this.response += json.data;
-
-      console.log("Ini hasil mardownnya" + marked(this.response));
 
       // Konversi semua data yang terkumpul ke HTML menggunakan marked
       const htmlMarked = marked(this.response);
       console.log("Ini hasil markdownnya:", htmlMarked);
 
       // Perbarui pesan terakhir dengan hasil HTML
-      if (this.messages.length > 0) {
-        this.messages[this.messages.length - 1].bot_message = htmlMarked;
+      if (this.response.length > 0) {
+        this.chats[this.chats.length - 1].bot_message.isTyping = true;
+        this.chats[this.chats.length - 1].bot_message.content = htmlMarked;
+      }
+
+      if (!json.isTyping) {
+        this.chats[this.chats.length - 1].bot_message.isTyping = false;
+        this.disableChatbox = false;
+        console.log("Teks berakhir")
       }
 
       // Scroll ke bawah setiap kali teks diperbarui
       this.$nextTick(() => {
         this.scrollToBottom();
       });
+      
     });
 
     const textarea = document.getElementById('message');
