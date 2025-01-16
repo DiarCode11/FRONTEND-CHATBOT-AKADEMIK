@@ -1,9 +1,9 @@
 <template>
     <!-- Untuk menampung page Home -->
-    <div class="bottom-0 left-0 right-0 flex-grow  h-screen">
+    <div class="bottom-0 left-0 right-0 flex-gro  h-screen">
       <div class="min-h-screen">
         <!-- Container responsif -->
-        <div class="max-w-4xl w-full mx-auto px-2 lg:px-8 h-full flex flex-col pt-3">
+        <div class="max-w-4xl w-full mx-auto px-2 lg:px-8 h-full flex flex-col items-center pt-3 mt-10">
             <!-- Hero -->
             <Header
               :title="'AKASHA'"
@@ -13,7 +13,7 @@
             />
 
             <!-- Content -->
-            <div class="p-4 flex-1 w-full lg:px-10 md:max-w-3xl lg:max-w-4xl h-full bg-white border border-gray-300 rounded-xl shadow-2xl">
+            <div class="p-4 flex flex-col w-full lg:px-10 md:max-w-3xl lg:max-w-4xl h-full bg-white border border-gray-300 rounded-xl shadow-2xl">
               <QuestionCard @questionSelected="handleQuestionSelected" />
               <h1>{{ questionFromChild }}</h1>
 
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Fixed Footer -->
-    <div class="fixed bottom-0 left-0 right-0 bg-blue-200 text-white p-3 text-center z-10">
+    <div class="fixed bottom-0 left-0 right-0 bg-blue-200 text-white p-3 text-center">
       <div class="flex justify-center items-center gap-2 md:gap-3">
         <!-- Menu -->
         <button
@@ -81,13 +81,14 @@
 
 <script scoped>
 import Header from '@/components/Header.vue';
-import UserChatBubble from '@/components/UserChatBubble.vue';
-import BotChatBubble from '@/components/BotChatBubble.vue';
+import UserChatBubble from '@/components/chat-bubble/UserChatBubble.vue';
+import BotChatBubble from '@/components/chat-bubble/BotChatBubble.vue';
 import QuestionCard from '@/components/QuestionCard.vue';
 import { marked } from 'marked';
 import { configDotenv } from 'dotenv';
 import io from 'socket.io-client';
 import MarkdownIt from 'markdown-it';
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'HomeView',
@@ -114,10 +115,12 @@ export default {
         question: '',
         messages: [], // Array untuk menyimpan pesan
         items: [],
-        socket: io("http://192.168.37.52:5000"), //Diganti dengan IP server (bisa berubah-ubah)
+        socket: io("http://192.168.133.52:5001"), //Diganti dengan IP server (bisa berubah-ubah)
         response: '',
         disableChatbox: false,
-        questionFromChild: ''
+        questionFromChild: '',
+        email: '',
+        password: ''
     };
   },
   methods:{
@@ -313,7 +316,7 @@ export default {
     cursor: not-allowed; /* Mengubah kursor menjadi tanda tidak diizinkan */
   }
 
-  /* Tabel styling */
+  Tabel styling
   table {
     border-collapse: collapse;
     width: 100%;
@@ -361,17 +364,4 @@ export default {
     color: #000000;
   }
 
-  ol {
-    margin: 0; /* Menghapus margin pada daftar */
-    padding: 0; /* Menghapus padding pada daftar */
-  }
-
-  ol li {
-    margin: 0; /* Menghapus margin pada item daftar */
-    padding: 0; /* Menghapus padding pada item daftar */
-  }
-
-  ol li p {
-    margin: 0; /* Menghapus margin pada paragraf di dalam item daftar */
-  }
 </style>

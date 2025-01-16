@@ -1,6 +1,6 @@
 import Navbar from '../components/Navbar.vue';
-import UserChatBubble from '../components/UserChatBubble.vue';
-import BotChatBubble from '../components/BotChatBubble.vue';
+import UserChatBubble from '../components/chat-bubble/UserChatBubble.vue';
+import BotChatBubble from '../components/chat-bubble/BotChatBubble.vue';
 import QuestionCard from '../components/QuestionCard.vue';
 import Header from '../components/Header.vue';
 import { marked } from 'marked';

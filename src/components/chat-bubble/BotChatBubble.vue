@@ -32,16 +32,16 @@
         </div>
       </div>
       <div v-if="showAction" class="flex gap-3">
-        <LikeButton :size="6" :isActive="false" :activeColor="`text-blue-500`" inactiveColor="text-slate-500 w-6"/>
-        <DislikeButton :size="6" :isActive="false" :activeColor="`text-blue-500`" inactiveColor="text-slate-500 w-6"/>
+        <LikeButton :size="6" :isActive="isLikeActive" :activeColor="`text-blue-500`" inactiveColor="text-slate-500 w-6" @click="toggleLike()"/>
+        <DislikeButton :size="6" :isActive="isDislikeActive" :activeColor="`text-blue-500`" inactiveColor="text-slate-500 w-6" @click="toggleDislike()"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import LikeButton from '@/buttons/LikeButton.vue';
-import DislikeButton from '@/buttons/DislikeButton.vue';
+import LikeButton from '../buttons/LikeButton.vue';
+import DislikeButton from '../buttons/DislikeButton.vue';
 
 export default {
   components: {
@@ -59,5 +59,29 @@ export default {
       default: false,
     }
   },
+  data() {
+    return {
+      isLikeActive: false,
+      isDislikeActive: false
+    };
+  },
+  methods: {
+    toggleLike() {
+      // Toggle Like and disable Dislike if Like is activated
+      this.isLikeActive = !this.isLikeActive;
+      console.log("Kondisi like: ", this.isLikeActive)
+      if (this.isLikeActive) {
+        this.isDislikeActive = false; // Nonaktifkan Dislike
+      }
+    },
+    toggleDislike() {
+      // Toggle Dislike and disable Like if Dislike is activated
+      this.isDislikeActive = !this.isDislikeActive;
+      if (this.isDislikeActive) {
+        this.isLikeActive = false; // Nonaktifkan Like
+      }
+    },
+  },
 };
 </script>
+

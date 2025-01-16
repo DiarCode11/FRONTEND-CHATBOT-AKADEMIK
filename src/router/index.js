@@ -5,6 +5,11 @@ import AboutView from "@/views/AboutView.vue";
 import HomeView from "@/views/HomeView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import AdminView from "@/views/Auth/AdminView.vue";
+import DashboardView from "@/views/Auth/DashboardView.vue";
+import DatasetManagementView from "@/views/Auth/DatasetManagementView.vue";
+import HistoryChatProcessView from "@/views/Auth/HistoryChatProcess.vue";
+import FeedbackView from "@/views/Auth/FeedbackView.vue";
+import store from "@/store";
 
 // Definisikan rute halaman
 const routes =[
@@ -23,7 +28,30 @@ const routes =[
     {
         path: '/admin',
         name: 'Admin',
-        component: AdminView
+        component: AdminView,
+        // meta: { requiresAuth: true },
+        children: [
+            {
+                path: '',
+                name: 'AdminDashboard',
+                component: DashboardView
+            },
+            {
+                path: 'dataset-management',
+                name: 'DatasetManagement',
+                component: DatasetManagementView
+            },
+            {
+                path: 'history-chat-process',
+                name: 'HistoryChatProcess',
+                component: HistoryChatProcessView
+            },
+            {
+                path: 'feedback',
+                name: 'Feedback',
+                component: FeedbackView
+            }
+        ]
     }
     ,
     {
@@ -40,5 +68,16 @@ const router = createRouter(
         routes
     }
 )
+
+// router.beforeEach((to, from, next) => {
+//     // Jika endpoint membutuhkan autentikasi dan pengguna belum login
+//     if (to.meta.requiresAuth && !store.state.isAuthenticated) {
+//         // Redirect ke halaman utama
+//         next('/')
+//     } else {
+//         // Lanjutkan ke halaman tujuan
+//         next()
+//     }
+// })
 
 export default router

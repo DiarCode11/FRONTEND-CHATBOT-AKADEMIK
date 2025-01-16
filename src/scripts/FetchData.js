@@ -60,7 +60,7 @@ export async function sendPostRequest(url, data) {
 
 // Panggil fungsi di dalam fungsi async
 async function main() {
-    const data = await checkConnection('http://localhost:5000');
+    const data = await checkConnection('http://localhost:5001/api/dataset-management');
     console.log(data);  // Menampilkan hasil setelah fungsi selesai
 }
 
