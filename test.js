@@ -1,59 +1,20 @@
-function dynamicPagination(range, input) {
-    // Membagi input dengan 3 dan menggunakan Math.floor untuk mendapatkan kelipatan 3 terdekat
-    const start = Math.floor((input - 1) / range) * range + 1;
-    const end = start + range - 1;
-    const pages = [];
+const text = `
+Untuk mengakses Sistem Informasi Akademik (SIAK), berikut adalah langkah-langkah yang perlu dilakukan:
 
-    for (let i = start; i <= end; i++) {
-        pages.push(i);
-    }
+. **Buka Browser**: Gunakan perangkat digital seperti komputer atau telepon genggam yang terhubung dengan internet dan memiliki web browser yang terinstal (misalnya Firefox, Google Chrome, atau lainnya).
 
-    return pages;
-    
-}
+. **Masukkan Alamat URL**: Ketikkan \`sso.undiksha.ac.id\` pada address bar browser dan tekan enter.
 
-function getPagination(total_page, current_page) {
-    const pages = [];
-    
-    // Jika jumlah halaman kurang dari atau sama dengan 5, tampilkan semua halaman
-    if (total_page <= 5) {
-        for (let i = 1; i <= total_page; i++) {
-            pages.push(i);
-        }
-    } else {
-        // Jika berada di awal rentang halaman
-        if (current_page <= 5) {
-            for (let i = 1; i <= 5; i++) {
-                pages.push(i);
-            }
-            pages.push('...');
-            pages.push(total_page);
-        } 
-        // Jika berada di akhir rentang halaman
-        else if (current_page > total_page - 5) {
-            pages.push(1);
-            pages.push('...');
-            for (let i = total_page - 4; i <= total_page; i++) {
-                pages.push(i);
-            }
-        } 
-        // Jika berada di tengah rentang halaman
-        else {
-            pages.push(1);
-            pages.push('...');
-            for (let i = current_page - 2; i <= current_page + 2; i++) {
-                pages.push(i);
-            }
-            pages.push('...');
-            pages.push(total_page);
-        }
-    }
-    
-    return pages;
-}
+. **Login**: Setelah halaman awal website muncul, masukkan username dan password SSO yang telah diberikan kepada mahasiswa. Setelah menginput username dan password, klik tombol login.
 
+. **Akses SIAK-NG**: Setelah berhasil login, silakan klik pada sistem SIAK-NG untuk melakukan proses akademik.
 
-// Contoh penggunaan
-console.log(getPagination(11, 9));
-console.log(dynamicPagination(5 ,12));
+. **Menu yang Tersedia**: Di dalam SIAK-NG, terdapat beberapa menu yang bisa diakses, seperti Dashboard, Biodata, Kartu Rencana Studi (KRS), dan Kartu Hasil Studi (KHS).
 
+Langkah-langkah ini diambil dari data terbaru yang tersedia pada tahun 2023. Jika ada pertanyaan lebih lanjut, silakan tanyakan!
+`;
+
+// Mengganti **...** dengan <b>...</b>
+const htmlText = text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>");
+
+console.log(htmlText);

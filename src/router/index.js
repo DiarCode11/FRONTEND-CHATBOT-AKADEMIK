@@ -39,7 +39,24 @@ const routes =[
             {
                 path: 'dataset-management',
                 name: 'DatasetManagement',
-                component: DatasetManagementView
+                component: DatasetManagementView,
+                // children: [
+                //     {
+                //         path: 'pdf',
+                //         name: 'PdfDataset',
+                //         component: PdfDatasetView
+                //     },
+                //     {
+                //         path: 'link',
+                //         name: 'LinkDataset',
+                //         component: LinkDatasetView
+                //     },
+                //     {
+                //         path: 'vector-db',
+                //         name: 'VectorDb',
+                //         component: VectorDbView
+                //     }
+                // ] 
             },
             {
                 path: 'history-chat-process',

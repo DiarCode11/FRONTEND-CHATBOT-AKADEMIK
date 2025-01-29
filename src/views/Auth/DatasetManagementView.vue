@@ -152,7 +152,9 @@
     </Modal>
   <p class="text-sm text-gray-400">Admin /</p>
   <h1 class="text-xl font-bold pb-6">Dataset Management</h1>
-  <div class="flex gap-4 bg-white rounded-3xl shadow-lg flex-col">
+  <div class="relative flex gap-4 bg-white rounded-3xl shadow-lg flex-col">
+    <span class="bg-gradient-to-r from-white to-transparent w-5 h-[calc(100%-100px)] absolute mt-10 left-0"></span>
+		<span class="bg-gradient-to-r from-transparent to-white w-5 h-[calc(100%-120px)] absolute mt-10 right-0"></span>
     <div class="w-full flex justify-between items-center px-6 pb-2 pt-7 gap-3">
       <div class="">
         <button

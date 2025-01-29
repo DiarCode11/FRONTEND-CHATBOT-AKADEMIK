@@ -10,7 +10,7 @@
       >
         <i class="bi bi-person-circle text-gray-800"></i>
       </div>
-      <h1 class="pt-4 text-lg font-bold">800</h1>
+      <h1 class="pt-4 text-lg font-bold">{{ userCount }}</h1>
       <p>User Online</p>
     </div>
     <div
@@ -48,8 +48,8 @@
     </div>
   </div>
   <div class="relative flex gap-4 bg-white rounded-3xl shadow-lg flex-col">
-		<span class="bg-gradient-to-r from-white to-transparent w-4 h-full absolute my-10 left-0"></span>
-		<span class="bg-gradient-to-r from-transparent to-white w-4 h-full absolute my-10 right-0"></span>
+		<span class="bg-gradient-to-r from-white to-transparent w-5 h-[calc(100%-100px)] absolute mt-10 left-0"></span>
+		<span class="bg-gradient-to-r from-transparent to-white w-5 h-[calc(100%-120px)] absolute mt-10 right-0"></span>
     <div class="w-full flex justify-between items-center px-6 pb-2 pt-7 gap-3">
       <div class="">
         <button
@@ -88,20 +88,24 @@
           <table class="min-w-full w-max bg-white">
             <thead>
               <tr class="bg-gray-200 text-gray-600 uppercase text-xs">
-                <th class="py-3 px-6 text-left">Deskripsi</th>
-                <th class="py-3 px-6 text-left">Nama File</th>
+                <th class="py-3 px-6 text-left">No</th>
+                <th class="py-3 px-6 text-left">Username</th>
+                <th class="py-3 px-6 text-left">Email</th>
+                <th class="py-3 px-6 text-left">Status</th>
                 <th class="py-3 px-6 text-left">Timestamp</th>
                 <th class="py-3 px-6 text-left">Aksi</th>
               </tr>
             </thead>
             <tbody class="text-gray-600 text-xs">
               <tr v-for="i in 7" :key="i" class="border-b">
-                <td class="py-3 px-6 text-left">{{ 1 }}</td>
-                <td class="py-3 px-6 text-left">{{ 1 }}</td>
-                <td class="py-3 px-6 text-left">{{ 1 }}</td>
+                <td class="py-3 px-6 text-left">{{ i }}</td>
+                <td class="py-3 px-6 text-left">Diar</td>
+                <td class="py-3 px-6 text-left">gdsudiartika@gmail.com</td>
+                <td class="py-3 px-6 text-left">Online</td>
+                <td class="py-3 px-6 text-left">10-10-2025</td>
                 <td class="py-3 px-6 text-left flex gap-2">
-                  <EditButton @button-clicked="setDataEdited(file)" />
-                  <DeleteButton @button-clicked="setDataDeleted(file)" />
+                  <EditButton @button-clicked="" />
+                  <DeleteButton @button-clicked="" />
                 </td>
               </tr>
             </tbody>
@@ -143,8 +147,20 @@
 </template>
 
 <script>
+import EditButton from '@/components/buttons/EditButton.vue';
+import DeleteButton from '@/components/buttons/DeleteButton.vue';
+
 export default {
   name: "DashboardView",
+  components: {
+    EditButton,
+    DeleteButton
+  },
+  computed: {
+    userCount() {
+      return this.$store.state.userCount;
+    }
+  }
 };
 </script>
 

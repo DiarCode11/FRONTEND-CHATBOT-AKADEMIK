@@ -1,85 +1,4 @@
-<template>
-    <!-- Untuk menampung page Home -->
-    <div class="bottom-0 left-0 right-0 flex-gro  h-screen">
-      <div class="min-h-screen">
-        <!-- Container responsif -->
-        <div class="max-w-4xl w-full mx-auto px-2 lg:px-8 h-full flex flex-col items-center pt-3 mt-10">
-            <!-- Hero -->
-            <Header
-              :title="'AKASHA'"
-              :subtitle="'Layanan AI Generatif untuk akses informasi Akademik Undiksha'"
-              :version="'ALPHA'"
-              :isConnected="isConnected"
-            />
-
-            <!-- Content -->
-            <div class="p-4 flex flex-col w-full lg:px-10 md:max-w-3xl lg:max-w-4xl h-full bg-white border border-gray-300 rounded-xl shadow-2xl">
-              <QuestionCard @questionSelected="handleQuestionSelected" />
-              <h1>{{ questionFromChild }}</h1>
-
-              <div class="pb-28 flex flex-col"> <!-- Perbaikan: padding bawah lebih besar -->
-                <!-- Menampilkan chat bubbles untuk setiap pesan -->
-                <div class="flex flex-col gap-y-4 pt-4">
-                  <!-- Bubble Chat dari AI -->
-                  <BotChatBubble :message="'Salam Harmoni🙏 <br><br>Saya merupakan Chatbot Akademik Undiksha, <strong>ada yang bisa saya bantu?</strong>'" :showAction="true"/>
-                  <div v-for="(message, index) in chats" :key="index" class="flex flex-col gap-y-3">
-                    <UserChatBubble :message="message.user_message.content"/>
-                    <BotChatBubble :message="message.bot_message.content" :showAction="!message.bot_message.isTyping"/>
-                  </div>
-                </div>
-                <span id="bottomPage" class="h-10"></span>
-              </div>
-            </div>
-          </div>
-      </div>
-    </div>
-
-    <!-- Fixed Footer -->
-    <div class="fixed bottom-0 left-0 right-0 bg-blue-200 text-white p-3 text-center">
-      <div class="flex justify-center items-center gap-2 md:gap-3">
-        <!-- Menu -->
-        <button
-          @click="submitQuestion"
-          class="flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
-          aria-label="Kirim"
-        >
-          <!-- Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-          </svg>
-        </button>
-
-        <!-- Input Textarea -->
-        <div class="w-full rounded-xl lg:rounded-3xl lg:max-w-[60%]">
-          <textarea
-            v-model="question"
-            id="message"
-            class="resize-none w-full p-2 text-black rounded-3xl border-white border-4 focus:outline-none text-base overflow-hidden"
-            placeholder="Ketik pertanyaanmu..."
-            style="line-height: 1.2rem; max-height: 4rem;" 
-            @keydown="handleEnterKeydown"
-            :disabled="disableChatbox"
-          ></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <button
-          @click="submitQuestion"
-          class="flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
-          aria-label="Kirim"
-          :disabled="disableChatbox"
-        >
-          <!-- Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-</template>
-
-<script scoped>
+<script>
 import Header from '@/components/Header.vue';
 import UserChatBubble from '@/components/chat-bubble/UserChatBubble.vue';
 import BotChatBubble from '@/components/chat-bubble/BotChatBubble.vue';
@@ -92,6 +11,10 @@ import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'HomeView',
+    props: {
+      socket: Object,
+      isConnected: Boolean
+    },
     components: {
         Header,
         UserChatBubble,
@@ -100,7 +23,7 @@ export default {
     },
     data() {
       return {
-        isConnected: false,
+        deleteChatModalStatus: false,
         isTyping: false,
         chats: [],
         Message: {
@@ -115,7 +38,6 @@ export default {
         question: '',
         messages: [], // Array untuk menyimpan pesan
         items: [],
-        socket: io("http://192.168.133.52:5001"), //Diganti dengan IP server (bisa berubah-ubah)
         response: '',
         disableChatbox: false,
         questionFromChild: '',
@@ -124,18 +46,6 @@ export default {
     };
   },
   methods:{
-    connectSocket() {
-      this.socket.on('connect', () => {
-        this.isConnected = true;
-        console.log('Socket connected');
-        console.log(this.isConnected)
-      });
-
-      this.socket.on('disconnect', () => {
-        this.isConnected = false; 
-        console.log('Socket disconnected');
-      });
-    },
     handleQuestionSelected(question) {
       this.question = question;
       this.submitQuestion();
@@ -166,13 +76,14 @@ export default {
 
         const botMessage = { ...this.Message };
         botMessage.id = this.chats.length + 1;
-        console.log("Ini bot message", botMessage);
+        console.log("Ini message", botMessage);
  
         this.chats.push({
           user_message: userMessage,
           bot_message: botMessage
         });
         
+        console.log("Hasil chat", this.chats);
 
         console.log("Ini chat", this.chats.botMessage);
 
@@ -222,6 +133,7 @@ export default {
             });
           }, 100); // Interval waktu dalam milidetik (100ms = 0.1 detik)
           
+
           return;
         }
         
@@ -248,33 +160,57 @@ export default {
         this.submitQuestion();  // Kirim pesan
       }
       // Jika Shift + Enter ditekan, biarkan textarea membuat baris baru
+    },
+    toggleDeleteChatModal() {
+      this.deleteChatModalStatus = !this.deleteChatModalStatus
+      console.log(this.deleteChatModalStatus)
+    },
+    closeDeleteChatModal() {
+      this.deleteChatModalStatus = false
     }
   },
   mounted() {
-    this.connectSocket();
+    // Ambil data dari Local
+    const storedChatData = localStorage.getItem('chatData')
+    if (storedChatData) {
+      this.chats = JSON.parse(storedChatData)
+      console.log("Data chat sebelumnya telah ditemukan");
+    } else {
+      console.log("Tidak ada data chat sebelumnya")
+    }
 
     const md = new MarkdownIt();
 
     this.socket.on('response', (json) => {
       console.log("Hasil JSON: ",json);
       
-      this.response += json.data;
+      this.response += json.chunk;
 
       // Konversi semua data yang terkumpul ke HTML menggunakan marked
       const htmlMarked = md.render(this.response);
+
+      // Konversi ke tag <b> jika ada ** di dalam teks
+      const htmlText = this.response
+                      .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+                      .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" class="bg-gray-500 text-white font-mono px-2 rounded-xl hover:bg-gray-600">$1</a>');
+
       // const htmlMarked = marked(this.response);
       console.log("Ini hasil markdownnya:", this.response);
 
       // Perbarui pesan terakhir dengan hasil HTML
       if (this.response.length > 0) {
         this.chats[this.chats.length - 1].bot_message.isTyping = true;
-        this.chats[this.chats.length - 1].bot_message.content = htmlMarked;
+        // this.chats[this.chats.length - 1].bot_message.content = htmlMarked;
+        this.chats[this.chats.length - 1].bot_message.content = htmlText;
       }
 
       if (!json.isTyping) {
         this.chats[this.chats.length - 1].bot_message.isTyping = false;
         this.disableChatbox = false;
         console.log("Teks berakhir")
+        console.log("Isi chat: ", [...this.chats])
+        const currect_chat = [...this.chats]
+        localStorage.setItem('chatData', JSON.stringify(currect_chat))
       }
 
       // Scroll ke bawah setiap kali teks diperbarui
@@ -308,6 +244,105 @@ export default {
 }
 </script>
 
+<template>
+    <!-- Untuk menampung page Home -->
+    <div class="bottom-0 left-0 right-0 flex-gro  h-screen">
+      <div class="min-h-screen">
+        <!-- Container responsif -->
+        <div class="max-w-4xl w-full mx-auto px-2 lg:px-8 h-full flex flex-col items-center pt-3 mt-10">
+            <!-- Hero -->
+            <Header
+              :title="'AKASHA'"
+              :subtitle="'Layanan AI Generatif untuk akses informasi Akademik Undiksha'"
+              :version="'ALPHA'"
+              :isConnected="isConnected"
+            />
+
+            <!-- Content -->
+            <div class="p-4 flex flex-col w-full lg:px-10 md:max-w-3xl lg:max-w-4xl h-full bg-white border border-gray-300 rounded-xl shadow-2xl">
+              <QuestionCard @questionSelected="handleQuestionSelected" />
+              <h1>{{ questionFromChild }}</h1>
+
+              <div class="pb-28 flex flex-col"> <!-- Perbaikan: padding bawah lebih besar -->
+                <!-- Menampilkan chat bubbles untuk setiap pesan -->
+                <div class="flex flex-col gap-y-4 pt-4">
+                  <!-- Bubble Chat dari AI -->
+                  <BotChatBubble :message="'Salam Harmoni🙏 <br><br>Saya merupakan Chatbot Akademik Undiksha, <strong>ada yang bisa saya bantu?</strong>'" :showAction="true"/>
+                  <div v-for="(message, index) in chats" :key="index" class="flex flex-col gap-y-3">
+                    <UserChatBubble :message="message.user_message.content"/>
+                    <BotChatBubble :message="message.bot_message.content" :showAction="!message.bot_message.isTyping"/>
+                  </div>
+                </div>
+                <span id="bottomPage" class="h-10"></span>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <!-- Fixed Footer -->
+    <!-- <div class="fixed bg-white/20 h-full w-full top-0 left-0 z-40"></div> -->
+    <div class="fixed bottom-0 left-0 right-0 bg-blue-200 text-white p-3 text-center">
+      <div class="flex justify-center items-center gap-2 md:gap-3">
+        <!-- Menu -->
+        <div class="relative z-10">
+          <!-- Popup Modal -->
+          <div v-if="deleteChatModalStatus" class="bg-white flex-col rounded-xl shadow-lg shadow-gray-500 border w-40 bottom-10 left-0 z-20 absolute flex justify-center items-center">
+            <div class="w-4/5 py-4 gap-y-1 flex flex-col">
+              <button class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
+                Eksplore
+              </button>
+              <button class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
+                Hapus Chat
+              </button>
+            </div>
+          </div>
+          <button
+            @click="toggleDeleteChatModal()"
+            class="z-10 relative flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
+            aria-label="Kirim"
+          >
+            <!-- Icon Close-->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+              <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+            </svg>
+
+            <!-- Icon Open -->
+
+
+          </button>
+        </div>
+
+        <!-- Input Textarea -->
+        <div class="w-full rounded-xl lg:rounded-3xl lg:max-w-[60%]">
+          <textarea
+            v-model="question"
+            id="message"
+            class="resize-none w-full p-2 text-black rounded-xl border-white border-4 focus:outline-none text-base overflow-hidden"
+            placeholder="Ketik pertanyaanmu..."
+            style="line-height: 1.2rem; max-height: 4rem;" 
+            @keydown="handleEnterKeydown"
+            :disabled="disableChatbox"
+          ></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          @click="submitQuestion"
+          class="flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
+          aria-label="Kirim"
+          :disabled="disableChatbox"
+        >
+          <!-- Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+</template>
+
 <style scoped>
   textarea:disabled {
     background-color: #f0f0f0; /* Warna latar belakang yang lebih terang */
@@ -316,7 +351,6 @@ export default {
     cursor: not-allowed; /* Mengubah kursor menjadi tanda tidak diizinkan */
   }
 
-  Tabel styling
   table {
     border-collapse: collapse;
     width: 100%;
@@ -363,5 +397,10 @@ export default {
     font-weight: bold;
     color: #000000;
   }
-
+  
+.custom-link {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
 </style>
