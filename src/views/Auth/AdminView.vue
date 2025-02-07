@@ -1,5 +1,5 @@
 <template>
-    <div class="grid md:grid-cols-[280px_1fr] grid-cols-[1fr] h-screen ">
+    <div v-if="isAuthenticated && isConnectedStatus" class="grid md:grid-cols-[280px_1fr] grid-cols-[1fr] h-screen ">
       <!-- Navbar Desktop -->
       <aside class="bg-sky-500 p-4 overflow-auto hidden md:block">
         <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
@@ -32,19 +32,19 @@
               <transition name="fade">
                 <ul v-if="dropdownActive" class="mt-2 space-y-2 pl-6">
                   <li>
-                    <router-link to="/admin/dataset-pdf" 
+                    <router-link to="/admin/dataset-management/pdf" 
                       class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out text-white">
                       Dataset PDF
                     </router-link>
                   </li>
                   <li>
-                    <router-link to="/admin/dataset-link" 
+                    <router-link to="/admin/dataset-management/link" 
                       class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out text-white">
                       Dataset Link
                     </router-link>
                   </li>
                   <li>
-                    <router-link to="/admin/vector-database" 
+                    <router-link to="/admin/dataset-management/vectordb" 
                       class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out text-white">
                       Basis Data Vektor
                     </router-link>
@@ -141,24 +141,50 @@
 
       <!-- Content -->
       <main class="mt-14 p-5 overflow-scroll overflow-x-hidden bg-slate-50 text-black ">
-        <router-view :userConnected="userConnected"></router-view>
+        <router-view></router-view>
       </main>
     </div>
+
+    <!-- Jika user tidak terautentikasi -->
+    <div v-if="!isAuthenticated && isConnectedStatus === true" >
+      <ForbiddenView />
+    </div>
+
+    <div v-if="isConnectedStatus === false" class="text-black flex flex-col justify-center items-center h-screen">
+        <DisconnectIcon />
+        <div class="pt-5">
+          <h1 class="text-center font-semibold text-gray-500 px-12">Koneksi terputus, silakan coba lagi nanti</h1>
+        </div>
+    </div>
+
 </template>
 
 <script>
+import Cookies from 'js-cookie';
+import ForbiddenView from '@/views/Error/ForbiddenView.vue';
+import DisconnectIcon from '@/components/icons/DisconnectIcon.vue';
+
 export default {
   name: "AdminView",
   data() {
     return {
-      dropdownActive: false
+      dropdownActive: false,
+      ipAddress: import.meta.env.VITE_SERVER_URL,
+      isAuthenticated: false,
     }
   },
-  props: {
-    userConnected: {
-      type: Number, 
-      default: 0
-    },
+  components: {
+    ForbiddenView,
+    DisconnectIcon
+  },
+  async created() {
+    console.log("Halaman dimuat")
+    await this.connectToAdmin();
+  },
+  computed: {
+    isConnectedStatus() {
+      return this.$store.state.isConnected;
+    }, 
   },
   methods: {
     isNavActive(route){
@@ -167,6 +193,36 @@ export default {
     toggleDropdown() {
       this.dropdownActive = !this.dropdownActive; // Toggle dropdown
     },
+    async connectToAdmin() {
+      console.log(Cookies.get("csrf_access_token"));
+      try {
+        const response = await fetch(this.ipAddress + "/users/admin", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+          },
+          // body: JSON.stringify({
+          //   email: this.email,
+          //   password: this.password,
+          // }),
+          credentials: 'include',
+        });
+
+        const data = await response.json();
+        console.log("Response server: ", data.status);
+        if (response.ok) {
+          this.isAuthenticated = data.status;
+          console.log("Berhasil terhubung ke admin");
+        } else {
+          this.isAuthenticated = data.status;
+          console.log("Gagal terhubung ke admin");
+        }
+      } catch (error) {
+        this.isAuthenticated = false;
+        console.error("Error saat menghubungkan ke admin: ", error);
+      }
+    }
   },
 };
 </script>

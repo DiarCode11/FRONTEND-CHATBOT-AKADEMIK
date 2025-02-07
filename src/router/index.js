@@ -3,12 +3,16 @@ import { createRouter, createWebHistory } from "vue-router";
 // Import Komponen Halaman
 import AboutView from "@/views/AboutView.vue";
 import HomeView from "@/views/HomeView.vue";
-import NotFoundView from "@/views/NotFoundView.vue";
+import NotFoundView from "@/views/Error/NotFoundView.vue";
 import AdminView from "@/views/Auth/AdminView.vue";
 import DashboardView from "@/views/Auth/DashboardView.vue";
 import DatasetManagementView from "@/views/Auth/DatasetManagementView.vue";
 import HistoryChatProcessView from "@/views/Auth/HistoryChatProcess.vue";
 import FeedbackView from "@/views/Auth/FeedbackView.vue";
+import DatasetHome from "@/views/Auth/dataset/DatasetHome.vue";
+import DatasetPdf from "@/views/Auth/dataset/DatasetPdf.vue";
+import DatasetLink from "@/views/Auth/dataset/DatasetLink.vue";
+import VectorDatabase from "@/views/Auth/dataset/VectorDatabase.vue";
 import store from "@/store";
 
 // Definisikan rute halaman
@@ -29,7 +33,7 @@ const routes =[
         path: '/admin',
         name: 'Admin',
         component: AdminView,
-        // meta: { requiresAuth: true },
+        meta: { requiresAuth: true, role: 'admin' },
         children: [
             {
                 path: '',
@@ -40,23 +44,29 @@ const routes =[
                 path: 'dataset-management',
                 name: 'DatasetManagement',
                 component: DatasetManagementView,
-                // children: [
-                //     {
-                //         path: 'pdf',
-                //         name: 'PdfDataset',
-                //         component: PdfDatasetView
-                //     },
-                //     {
-                //         path: 'link',
-                //         name: 'LinkDataset',
-                //         component: LinkDatasetView
-                //     },
-                //     {
-                //         path: 'vector-db',
-                //         name: 'VectorDb',
-                //         component: VectorDbView
-                //     }
-                // ] 
+                redirect: { name: 'PdfDataset' },
+                children: [
+                    {
+                        path: '',
+                        name: 'DatasetManagementHome',
+                        component: DatasetHome
+                    },
+                    {
+                        path: 'pdf',
+                        name: 'PdfDataset',
+                        component: DatasetPdf
+                    },
+                    {
+                        path: 'link',
+                        name: 'LinkDataset',
+                        component: DatasetLink
+                    },
+                    {
+                        path: 'vectordb',
+                        name: 'VectorDb',
+                        component: VectorDatabase
+                    }
+                ] 
             },
             {
                 path: 'history-chat-process',
@@ -86,15 +96,23 @@ const router = createRouter(
     }
 )
 
-// router.beforeEach((to, from, next) => {
-//     // Jika endpoint membutuhkan autentikasi dan pengguna belum login
-//     if (to.meta.requiresAuth && !store.state.isAuthenticated) {
-//         // Redirect ke halaman utama
-//         next('/')
-//     } else {
-//         // Lanjutkan ke halaman tujuan
-//         next()
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    const role = store.state.userAuth.role
+
+    if (to.meta.requiresAuth && role !== to.meta.role) {
+        // Pertahankan URL asli, tampilkan komponen 404
+        next({
+            name: 'NotFound',
+            params: {
+                pathMatch: to.path.substring(1).split('/') // Ambil path dan split menjadi array
+            },
+            // Pertahankan query dan hash jika ada
+            query: to.query,
+            hash: to.hash
+        });
+    } else {
+        next();
+    }
+})
 
 export default router

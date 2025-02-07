@@ -11,9 +11,11 @@
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
     "@primevue/themes": "^4.2.5",
+    "axios": "^1.7.9",
     "bootstrap-icons": "^1.11.3",
     "dotenv": "^16.4.7",
     "element-plus": "^2.9.0",
+    "js-cookie": "^3.0.5",
     "markdown-it": "^14.1.0",
     "marked": "^15.0.2",
     "primeicons": "^7.0.0",

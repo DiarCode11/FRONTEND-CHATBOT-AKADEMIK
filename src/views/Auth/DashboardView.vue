@@ -3,7 +3,11 @@
   <h1 class="text-xl font-bold pb-6">Dashboard</h1>
   <div class="grid md:grid-cols-4 gap-4 mb-5 grid-cols-2">
     <div
-      class="bg-gradient-to-br shadow-xl from-sky-500 to-sky-600 text-white p-4 rounded-xl"
+      class="bg-gradient-to-br shadow-xl text-white p-4 rounded-xl"
+      :class="{ 
+        'from-gray-300 to-gray-400': isConnectedStatus == false,
+        'from-sky-500 to-sky-600': isConnectedStatus == true 
+        }"
     >
       <div
         class="bg-white w-8 h-8 flex justify-center items-center rounded-full shadow-xl"
@@ -11,7 +15,8 @@
         <i class="bi bi-person-circle text-gray-800"></i>
       </div>
       <h1 class="pt-4 text-lg font-bold">{{ userCount }}</h1>
-      <p>User Online</p>
+      <p v-if="isConnectedStatus == false">Server Offline</p>
+      <p v-else>User Online</p>
     </div>
     <div
       class="bg-gradient-to-br shadow-xl from-green-500 to-green-600 text-white p-4 rounded-xl"
@@ -159,7 +164,10 @@ export default {
   computed: {
     userCount() {
       return this.$store.state.userCount;
-    }
+    },
+    isConnectedStatus() {
+      return this.$store.state.isConnected;
+    },  
   }
 };
 </script>

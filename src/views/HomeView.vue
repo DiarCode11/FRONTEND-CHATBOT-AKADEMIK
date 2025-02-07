@@ -13,7 +13,11 @@ export default {
     name: 'HomeView',
     props: {
       socket: Object,
-      isConnected: Boolean
+    },
+    computed: {
+      isConnectedStatus() {
+        return this.$store.state.isConnected;
+      },  
     },
     components: {
         Header,
@@ -62,6 +66,7 @@ export default {
       }
     },
     async submitQuestion() {
+      console.log("Status koneksi: ", this.isConnectedStatus)
       // Cek apakah pertanyaan tidak kosong dan bukan hanya spasi
       if (this.question.trim()) {
         
@@ -98,7 +103,7 @@ export default {
         this.response = '';
 
         // Pesan ketika server tidak terhubung
-        if (!this.isConnected) {
+        if (!this.isConnectedStatus) {
           const errorText = "Maaf sepertinya server Akasha sedang gangguan, mohon menunggu beberapa saat";
 
           let currentIndex = 0;
@@ -167,9 +172,26 @@ export default {
     },
     closeDeleteChatModal() {
       this.deleteChatModalStatus = false
+    },
+    handleDeleteChat() {
+      this.chats = []
+      localStorage.removeItem('chatData')
+      this.deleteChatModalStatus = false
+    },
+    handleExplore() {
+      // window.location.href = "https://undiksha.ac.id";
+      this.deleteChatModalStatus = false
+    },
+    closeDeleteChatModal(event) {
+      if (this.$refs.deleteChatModal && !this.$refs.deleteChatModal.contains(event.target)) {
+        this.deleteChatModalStatus = false
+      }
     }
   },
   mounted() {
+    // Tutup modal jika diklik di luar modal
+    document.addEventListener('click', this.closeDeleteChatModal);
+
     // Ambil data dari Local
     const storedChatData = localStorage.getItem('chatData')
     if (storedChatData) {
@@ -187,12 +209,13 @@ export default {
       this.response += json.chunk;
 
       // Konversi semua data yang terkumpul ke HTML menggunakan marked
-      const htmlMarked = md.render(this.response);
-
+      
       // Konversi ke tag <b> jika ada ** di dalam teks
-      const htmlText = this.response
-                      .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
-                      .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" class="bg-gray-500 text-white font-mono px-2 rounded-xl hover:bg-gray-600">$1</a>');
+        const htmlText = this.response
+        .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" class="bg-gray-500 text-white font-mono px-2 rounded-xl hover:bg-gray-600">$1</a>');
+        
+        const htmlMarked = md.render(htmlText);
 
       // const htmlMarked = marked(this.response);
       console.log("Ini hasil markdownnya:", this.response);
@@ -255,7 +278,7 @@ export default {
               :title="'AKASHA'"
               :subtitle="'Layanan AI Generatif untuk akses informasi Akademik Undiksha'"
               :version="'ALPHA'"
-              :isConnected="isConnected"
+              :isConnected="isConnectedStatus"
             />
 
             <!-- Content -->
@@ -286,19 +309,23 @@ export default {
       <div class="flex justify-center items-center gap-2 md:gap-3">
         <!-- Menu -->
         <div class="relative z-10">
+
           <!-- Popup Modal -->
-          <div v-if="deleteChatModalStatus" class="bg-white flex-col rounded-xl shadow-lg shadow-gray-500 border w-40 bottom-10 left-0 z-20 absolute flex justify-center items-center">
-            <div class="w-4/5 py-4 gap-y-1 flex flex-col">
-              <button class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
-                Eksplore
-              </button>
-              <button class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
-                Hapus Chat
-              </button>
+          <transition name="fade">
+            <div v-show="deleteChatModalStatus" ref="deleteChatModal" class="bg-white flex-col rounded-xl shadow-lg shadow-gray-500 border w-40 bottom-10 left-0 z-20 absolute flex justify-center items-center">
+              <div class="w-4/5 py-4 gap-y-1 flex flex-col">
+                <a href="https://undiksha.ac.id" target="_blank" rel="noopener noreferrer" @click="handleExplore()" class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
+                  Eksplore
+                </a>
+                <button @click="handleDeleteChat()" class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
+                  Hapus Chat
+                </button>
+              </div>
             </div>
-          </div>
+          </transition>
+
           <button
-            @click="toggleDeleteChatModal()"
+            @click.stop="toggleDeleteChatModal()"
             class="z-10 relative flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
             aria-label="Kirim"
           >
@@ -308,8 +335,6 @@ export default {
             </svg>
 
             <!-- Icon Open -->
-
-
           </button>
         </div>
 
@@ -344,63 +369,78 @@ export default {
 </template>
 
 <style scoped>
-  textarea:disabled {
-    background-color: #f0f0f0; /* Warna latar belakang yang lebih terang */
-    border-color: #f0f0f0; /* Border yang lebih terang */
-    color: #f0f0f0; /* Teks yang lebih gelap */
-    cursor: not-allowed; /* Mengubah kursor menjadi tanda tidak diizinkan */
-  }
+textarea:disabled {
+  background-color: #f0f0f0; /* Warna latar belakang yang lebih terang */
+  border-color: #f0f0f0; /* Border yang lebih terang */
+  color: #f0f0f0; /* Teks yang lebih gelap */
+  cursor: not-allowed; /* Mengubah kursor menjadi tanda tidak diizinkan */
+}
 
-  table {
-    border-collapse: collapse;
-    width: 100%;
-    font-family: Arial, sans-serif;
-    font-size: 18px;
-    text-align: left;
-    overflow: auto;
-  }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  text-align: left;
+  overflow: auto;
+}
 
-  /* Header Tabel */
-  thead tr {
-    background-color: #009879;
-    color: white;
-    text-align: center;
-  }
+/* Header Tabel */
+thead tr {
+  background-color: #009879;
+  color: white;
+  text-align: center;
+}
 
-  /* Header dan Cell Padding */
-  th, td {
-    padding: 12px 15px;
-  }
+/* Header dan Cell Padding */
+th, td {
+  padding: 12px 15px;
+}
 
-  /* Styling Baris Tabel */
-  tbody tr {
-    border-bottom: 1px solid #0e0c0c;
-  }
+/* Styling Baris Tabel */
+tbody tr {
+  border-bottom: 1px solid #0e0c0c;
+}
 
-  /* Baris Genap dengan Warna Berbeda */
-  tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-  }
+/* Baris Genap dengan Warna Berbeda */
+tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
 
-  /* Warna Khusus Baris Terakhir */
-  tbody tr:last-of-type {
-    border-bottom: 2px solid #000000;
-  }
+/* Warna Khusus Baris Terakhir */
+tbody tr:last-of-type {
+  border-bottom: 2px solid #000000;
+}
 
-  /* Hover Effect untuk Baris */
-  tbody tr:hover {
-    background-color: #f1f1f1;
-  }
+/* Hover Effect untuk Baris */
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
 
-  /* Styling Khusus untuk Baris Aktif */
-  tbody tr.active-row {
-    font-weight: bold;
-    color: #000000;
-  }
+/* Styling Khusus untuk Baris Aktif */
+tbody tr.active-row {
+  font-weight: bold;
+  color: #000000;
+}
   
 .custom-link {
   color: #3498db;
   text-decoration: none;
   font-weight: bold;
 }
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.fade-enter-to, .fade-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+
 </style>
