@@ -50,7 +50,7 @@
             to="/about"
             :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/about') }"
           >About</router-link>
-          <router-link v-if="role === 'admin'"
+          <router-link v-if="role === 'admin' && csrf_token"
             to="/admin"
             :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/admin') || isNavActive('/admin/dataset-management') || isNavActive('/admin/history-chat-process') || isNavActive('/admin/feedback') || isNavActive('/admin/feedback') }"
           >Administrator</router-link>

@@ -631,7 +631,7 @@ export default {
       if (this.link) {
         try {
           this.scrapLoading = true;
-          const response = await fetch(this.ipAddress + "/datasets/link/scrap", {
+          const response = await fetch(this.ipAddress + "/url-datasets/link/scrap", {
             method: "POST",
             headers: {
               "X-CSRF-TOKEN": Cookies.get("csrf_access_token"),
