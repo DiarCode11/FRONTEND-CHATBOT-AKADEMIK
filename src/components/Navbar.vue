@@ -23,7 +23,7 @@
         >About</router-link>
         <router-link v-if="role === 'admin'"
           to="/admin"
-          :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/admin') || isNavActive('/admin/dataset-management') || isNavActive('/admin/history-chat-process') || isNavActive('/admin/feedback') || isNavActive('/admin/feedback') }" @click="toggleSlider()"
+          :class="{ 'font-bold transition-all duration-300 ease-in-out': $route.path.startsWith('/admin') }" @click="toggleSlider()"
         >Administrator</router-link>
         <button
             class="bg-sky-600 mt-10 text-white px-6 py-2 rounded-lg hover:scale-105 hover:bg-sky-700 transition duration-200 ease-in-out"
@@ -52,7 +52,7 @@
           >About</router-link>
           <router-link v-if="role === 'admin' && csrf_token"
             to="/admin"
-            :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/admin') || isNavActive('/admin/dataset-management') || isNavActive('/admin/history-chat-process') || isNavActive('/admin/feedback') || isNavActive('/admin/feedback') }"
+            :class="{ 'font-bold transition-all duration-300 ease-in-out': $route.path.startsWith('/admin') }"
           >Administrator</router-link>
         </div>
         <div v-if="!username && !role">

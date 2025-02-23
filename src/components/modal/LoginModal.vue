@@ -294,8 +294,6 @@ export default {
             this.errorMessages = "Tidak dapat terhubung ke server";
           }
         }
-
-        // window.location.reload();
       }
     },
     async handleRegister() {
