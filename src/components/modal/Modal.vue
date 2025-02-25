@@ -6,8 +6,9 @@
     @click.self="closeModal"
     :class="{ 'opacity-0': !showModal }"
   >
-    <div class="flex items-center justify-center h-full px-10">
-      <div class="bg-white  rounded-lg p-2 md:w-96 w-80 lg:w-96 z-50 ">
+    <div class="flex items-center justify-center h-full px-5 w-full" ref="modalContent">
+      <div class="bg-white rounded-lg p-2 w-full z-50"
+      :class="{'md:w-96': size === 'sm', 'md:w-1/2': size === 'md', 'md:w-2/3': size === 'lg','md:w-3/4': size === 'xl'}">
         <div class="flex justify-end">
           <CloseButton @click="closeModal"/>
         </div>
@@ -32,10 +33,10 @@ export default {
       type: Boolean,
       default: false,
     },
-    closeModal: {
-      type: Function,
-      default: () => {},
-    },
+    size: {
+      type: String,
+      default: "md",
+    }
   },
   emits: ["update:showModal", "close"],
   methods: {

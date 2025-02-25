@@ -5,6 +5,7 @@
     <Modal
         v-model:showModal="showAddModal"
         @close="closeModal"
+        :size="'sm'"
     >
         <form action="" @submit.prevent="sendData">
             <div class="flex justify-center pb-4">
@@ -77,6 +78,7 @@
     <Modal
         v-model:showModal="showEditModal"
         @close="closeModal"
+        :size="'sm'"
     >
         <form action="" @submit.prevent="updateData">
             <div class="flex justify-center pb-4">
@@ -151,6 +153,7 @@
     <!-- Modal Delete -->
     <Modal
         v-model:showModal="showDeleteModal"
+        :size="'sm'"
         :closeModal="closeModal"
     >
       <span class="text-red-600 flex justify-center">

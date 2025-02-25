@@ -282,6 +282,7 @@ export default {
             // Simpan data user ke localStorage
             // localStorage.setItem('akasha_data', JSON.stringify(data.user));
             console.log('Login berhasil:', data);
+            window.location.reload();
             this.closeModal();
           } else {
             this.errorMessages = data['message'];
@@ -331,7 +332,7 @@ export default {
 
             // Simpan data ke Vuex
             this.$store.commit('setUserAuth', data.user);
-
+            window.location.reload();
             this.closeModal();
 
           } else {
@@ -342,8 +343,6 @@ export default {
           this.isLoading = false; // Sembunyikan animasi loading
           console.log(error)
         }
-
-        window.location.reload();
       }
     },
     switchAuthMode(){

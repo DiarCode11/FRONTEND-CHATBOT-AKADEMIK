@@ -2,7 +2,7 @@
   <router-view></router-view>
 
   <!-- Modal Add-->
-  <Modal v-model:showModal="showAddModal" @close="closeModal">
+  <Modal v-model:showModal="showAddModal"  :size="'sm'" @close="closeModal">
     <form action="" @submit.prevent="sendData">
       <div class="flex justify-center">
         <h1 class="text-xl font-semibold text-sky-600">Tambah Dataset</h1>
@@ -104,7 +104,7 @@
   </Modal>
 
   <!-- Modal Edit -->
-  <Modal v-model:showModal="showEditModal" @close="closeModal">
+  <Modal v-model:showModal="showEditModal" :size="'sm'" @close="closeModal">
     <form action="" @submit.prevent="updateData">
       <div class="flex justify-center pb-4">
         <h1 class="text-xl font-semibold text-yellow-600">Update Dataset</h1>
@@ -206,7 +206,7 @@
   </Modal>
 
   <!-- Modal Delete -->
-  <Modal v-model:showModal="showDeleteModal" :closeModal="closeModal">
+  <Modal v-model:showModal="showDeleteModal" :size="'sm'" :closeModal="closeModal">
     <span class="text-red-600 flex justify-center">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-20">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
@@ -233,7 +233,7 @@
   </Modal>
 
   <!-- Show Extracted Result -->
-  <Modal v-model:show-modal="showScrapingModal" :close-modal="closeModal">
+  <Modal v-model:show-modal="showScrapingModal" :size="'sm'" :close-modal="closeModal">
     <h1 class="text-lg font-semibold">URL:</h1>
     <p class="break-words"> {{ url }}</p>
     <h1 class="text-lg font-semibold">Hasil Ekstraksi</h1>
