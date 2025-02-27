@@ -42,6 +42,7 @@ export default {
       console.log('Pesan dari server', data)
       console.log('Jumlah pengguna', data.amount)
       this.$store.commit('setUserCount', data.amount)
+      this.$store.commit('setTotalChat', data.total_chat)
     })
 
     this.socket.on('user_disconnected', (data) => {

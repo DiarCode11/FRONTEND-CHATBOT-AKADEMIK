@@ -142,7 +142,6 @@ export default {
           return;
         }
         
-    
         try {
           // Kirimkan pesan ke server
           this.socket.emit('send_message', {"message": questionToSend});

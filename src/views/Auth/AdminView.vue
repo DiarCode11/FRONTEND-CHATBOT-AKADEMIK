@@ -64,13 +64,13 @@
                 <i class="bi bi-chat-left-dots pr-3"></i> History Chat Process
               </router-link>
             </li>
-            <li>
+            <!-- <li>
               <router-link to="/admin/feedback" 
                 class="block py-2 px-4 rounded transition-all duration-200 ease-in-out"
                 :class="{ 'text-sky-500 font-semibold bg-white': isNavActive('/admin/feedback'), 'text-white': !isNavActive('/admin/feedback') }">
                 <i class="bi bi-chat-right-heart pr-3"></i> Feedback
               </router-link>
-            </li>
+            </li> -->
           </ul>
         </nav>
       </aside>

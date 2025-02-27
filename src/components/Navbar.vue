@@ -223,11 +223,9 @@ export default {
     },
     updatePassword(value) {
       this.password = value;
-      console.log(this.password)
     },
     updateConfirmPassword(value) {
       this.confirmPassword = value;
-      console.log(this.confirmPassword)
     },
     closePopup(event) {
       if (this.$refs.popupContainer && !this.$refs.popupContainer.contains(event.target)) {

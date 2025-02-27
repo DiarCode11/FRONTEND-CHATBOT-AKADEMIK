@@ -311,7 +311,6 @@ import CloseIcon from "@/components/icons/CloseIcon.vue";
 import Modal from "@/components/modal/Modal.vue";
 import WarningIcon from "@/components/icons/WarningIcon.vue";
 import { getPagination } from "@/scripts/Pagination";
-import { search } from "@/scripts/SearchFromList";
 import Cookies from "js-cookie";
 import SuccessAlert from "@/components/alert/SuccessAlert.vue";
 import CloseButton from "@/components/buttons/CloseButton.vue";
