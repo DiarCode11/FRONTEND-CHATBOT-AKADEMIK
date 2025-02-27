@@ -2,7 +2,7 @@
   <router-view></router-view>
 
   <!-- Modal Add-->
-  <Modal v-model:showModal="showAddModal" @close="closeModal">
+  <Modal v-model:showModal="showAddModal"  :size="'sm'" @close="closeModal">
     <form action="" @submit.prevent="sendData">
       <div class="flex justify-center">
         <h1 class="text-xl font-semibold text-sky-600">Tambah Dataset</h1>
@@ -104,7 +104,7 @@
   </Modal>
 
   <!-- Modal Edit -->
-  <Modal v-model:showModal="showEditModal" @close="closeModal">
+  <Modal v-model:showModal="showEditModal" :size="'sm'" @close="closeModal">
     <form action="" @submit.prevent="updateData">
       <div class="flex justify-center pb-4">
         <h1 class="text-xl font-semibold text-yellow-600">Update Dataset</h1>
@@ -206,29 +206,17 @@
   </Modal>
 
   <!-- Modal Delete -->
-  <Modal v-model:showModal="showDeleteModal" :closeModal="closeModal">
-    <div class="bg-red-100 p-4 rounded-lg mb-5 flex gap-3 items-center">
-      <span class="text-red-600">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          class="size-6"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-            clip-rule="evenodd"
-          />
-        </svg>
+  <Modal v-model:showModal="showDeleteModal" :size="'sm'" :closeModal="closeModal">
+    <span class="text-red-600 flex justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-20">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+      </svg>
       </span>
-      <h1 class="text-lg font-semibold text-red-600">Hapus Dataset?</h1>
-    </div>
+    <h1 class="text-xl font-bold py-6 text-center">Hapus dataset</h1>
     <p class="text-center text-gray-700">
-      Yakin ingin menghapus dataset {{ dataDeleted.filename }}?. Perubahan akan bersifat
-      permanen
+      Yakin ingin menghapus dataset? Perubahan akan bersifat permanen
     </p>
-    <div class="flex justify-around pt-4">
+    <div class="flex justify-center gap-7 pt-4">
       <button
         @click="deleteData"
         class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-700 transition-all duration-500 ease-in-out hover:scale-105"
@@ -237,35 +225,36 @@
       </button>
       <button
         @click="closeModal"
-        class="text-red-600 border-red-400 border-2 px-6 py-2 rounded-lg hover:scale-105 transition-all duration-500 ease-in-out"
+        class="bg-red-600 text-white px-6 py-2 rounded-lg hover:scale-105 transition-all duration-500 ease-in-out"
       >
         Batal
       </button>
     </div>
   </Modal>
 
-  <div v-if="showAlert">
-    <div
-      class="bg-yellow-50 border-2 border-yellow-500 rounded-lg mb-5 gap-3 items-center text-yellow-600"
-    >
-      <div
-        @click.stop="showAlert = false"
-        class="w-full flex justify-end pr-2 pt-2 cursor-pointer"
-      >
-        <CloseIcon />
+  <!-- Show Extracted Result -->
+  <Modal v-model:show-modal="showScrapingModal" :size="'sm'" :close-modal="closeModal">
+    <h1 class="text-lg font-semibold">URL:</h1>
+    <p class="break-words"> {{ url }}</p>
+    <h1 class="text-lg font-semibold">Hasil Ekstraksi</h1>
+    <textarea readonly class="w-full h-60 resize-none focus:outline-none border-2 p-2 text-sm border-gray-500 rounded-lg" name="" id="">
+      {{ scrapingText }}
+    </textarea>
+  </Modal>
+
+  <SuccessAlert :message="successMessage" :show_alert="showSuccessAlert" @close="showSuccessAlert = false" />
+  <WarningStaticAlert :is-active="showWarningAlert" @close="showWarningAlert = false">
+    <div class="p-6">
+      <div class="flex pb-2 gap-x-3 items-center text-lg font-bold text-orange-600">
+        <WarningIcon :size="6" />
+        <h2>Perbarui Basis Data Vektor</h2>
       </div>
-      <div class="flex gap-4 pb-4 pl-4">
-        <span>
-          <WarningIcon />
-        </span>
-        <div class="text-xs">
-          <h1 class="text-sm font-semibold pb-1">Sinkronisasi dengan database vektor</h1>
-          Sinkronisasi diperlukan agar chatbot mengetahui informasi terbaru dari dataset.
-          Silahkan sinkronisasi terlebih dahulu melalui menu basis data vektor.
-        </div>
+      <div class="flex flex-col gap-1 pr-3">
+        <p>Terdeteksi modifikasi pada dataset URL namun basis data vektor belum diperbarui</p>
+        <p><strong>Modifikasi: </strong> {{ not_updated_url }}</p>
       </div>
     </div>
-  </div>
+  </WarningStaticAlert>
   <p class="text-sm text-gray-400">Admin /</p>
   <h1 class="text-xl font-bold pb-6">Dataset Management/Link</h1>
   <div
@@ -281,7 +270,7 @@
     <span
       class="bg-gradient-to-r from-transparent to-white w-5 h-[calc(100%-120px)] absolute mt-10 right-0"
     ></span>
-    <div class="w-full flex justify-between items-center px-6 pb-2 pt-7">
+    <div class="w-full flex justify-between items-center px-6 pb-2 pt-7 gap-3">
       <div class="">
         <button
           @click="openAddModal()"
@@ -294,6 +283,7 @@
       <div class="relative">
         <input
           type="text"
+          v-model="search_query"
           placeholder="Search..."
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full pl-10 p-2"
         />
@@ -344,6 +334,7 @@
                 <td class="py-3 px-6 text-left">{{ file.year }}</td>
                 <td class="py-3 px-6 text-left">
                   <button
+                    @click="openScrapingModal(file)"
                     class="bg-sky-500 w-full py-1 px-2 rounded-md text-white font-semibold"
                   >
                     Lihat detail
@@ -407,6 +398,8 @@ import WarningIcon from "@/components/icons/WarningIcon.vue";
 import ArrowRightIcon from "@/components/icons/ArrowRightIcon.vue";
 import { getPagination } from "@/scripts/Pagination";
 import Cookies from "js-cookie";
+import SuccessAlert from "@/components/alert/SuccessAlert.vue";
+import WarningStaticAlert from "@/components/alert/WarningStaticAlert.vue";
 
 export default {
   name: "DatasetManagementView",
@@ -418,6 +411,8 @@ export default {
     CloseIcon,
     WarningIcon,
     ArrowRightIcon,
+    SuccessAlert,
+    WarningStaticAlert
   },
   data() {
     return {
@@ -432,6 +427,9 @@ export default {
       showAddModal: false,
       showEditModal: false,
       showDeleteModal: false,
+      showScrapingModal : false,
+      scrapingText: "",
+      url: "",
       dataEdited: null,
       dataDeleted: null,
       fileName: "",
@@ -443,6 +441,11 @@ export default {
       showAlert: true,
       submitLoading: false,
       scrapLoading: false,
+      showSuccessAlert: false,
+      successMessage: "",
+      search_query: "",
+      not_updated_url: "",
+      showWarningAlert: false
     };
   },
   async created() {
@@ -453,6 +456,13 @@ export default {
     console.log(this.year);
   },
   computed: {
+    searchData() {
+      return this.file_data_link.filter(item =>
+        Object.values(item).some(value =>
+          value.toString().toLowerCase().includes(this.search_query.toLowerCase())
+        )
+      )
+    },
     showScrapingResult() {
       return this.textScraped != "";
     },
@@ -460,12 +470,18 @@ export default {
       return this.file_data_link.length > 0;
     },
     totalPages() {
-      return Math.ceil(this.file_data_link.length / this.items_per_page);
+      if (this.search_query === "") {
+        return Math.ceil(this.file_data_link.length / this.items_per_page);
+      }
+      return Math.ceil(this.searchData.length / this.items_per_page);
     },
     paginatedData() {
       const start = (this.current_page - 1) * this.items_per_page;
       const end = start + this.items_per_page;
-      return this.file_data_link.slice(start, end);
+      if (this.search_query === "") {
+        return this.file_data_link.slice(start, end);
+      }
+      return this.searchData.slice(start, end);
     },
     visiblePages() {
       // Menggunakan fungsi getPagination
@@ -487,6 +503,12 @@ export default {
 
         if (response.ok) {
           console.log("Data JSON yang diterima: ", data_json.data);
+          console.log("Data URL yang belum di update: ", data_json.not_updated_url);
+          console.log("Data JSON yang diterima: ", data_json.data.length > 0);
+          if (data_json.not_updated_url.length > 0) {
+            this.not_updated_url = this.url_not_updated_msg(data_json.not_updated_url);
+            this.showWarningAlert = true
+          }
           if (data_json.data.length > 0) {
             this.file_data_link = data_json.data;
             this.dataStatus = true;
@@ -527,10 +549,15 @@ export default {
         console.log("Response server saat mengambil data JSON: ", data_json);
 
         if (response.ok) {
-          // this.closeModal();
-          this.file_data_link.push(data_json.data);
+          if (data_json.not_updated_url.length > 0) {
+            this.not_updated_url = this.url_not_updated_msg(data_json.not_updated_url);
+            this.showWarningAlert = true
+          }
+          this.file_data_link.unshift(data_json.data);
+          this.showSuccessAlert = true;
+          this.successMessage = "Data berhasil ditambahkan";
           console.log("Data JSON yang dikirim: ", data_json.data);
-          closeModal();
+          this.closeModal();
         } else {
           this.errorMessage = data_json.message;
           console.log("Response server saat mengambil data JSON: ", data_json);
@@ -570,6 +597,14 @@ export default {
 
         if (response.ok) {
           this.closeModal();
+
+          if (data_json.not_updated_url.length > 0) {
+            this.not_updated_url = this.url_not_updated_msg(data_json.not_updated_url);
+            this.showWarningAlert = true
+          }
+
+          this.showSuccessAlert = true;
+          this.successMessage = "Data berhasil diperbarui";
 
           let newData = data_json.data_updated;
 
@@ -613,6 +648,12 @@ export default {
         console.log("Response server saat akan menghapus data JSON: ", data_json);
 
         if (response.ok) {
+          if (data_json.not_updated_url.length > 0) {
+            this.not_updated_url = this.url_not_updated_msg(data_json.not_updated_url);
+            this.showWarningAlert = true
+          }
+          this.showSuccessAlert = true;
+          this.successMessage = "Data berhasil dihapus";
           this.file_data_link = this.file_data_link.filter(
             (item) => item.id !== this.dataDeleted.id
           );
@@ -631,7 +672,7 @@ export default {
       if (this.link) {
         try {
           this.scrapLoading = true;
-          const response = await fetch(this.ipAddress + "/datasets/link/scrap", {
+          const response = await fetch(this.ipAddress + "/url-datasets/link/scrap", {
             method: "POST",
             headers: {
               "X-CSRF-TOKEN": Cookies.get("csrf_access_token"),
@@ -661,6 +702,30 @@ export default {
           this.textScraped = "";
         }
       }
+    },
+    url_not_updated_msg(data){
+      if (data.length > 0) {
+        const actionLabels = {
+          delete: "dihapus",
+          add: "ditambahkan",
+          update: "diperbarui"
+        };
+        
+        const formattedFiles = data.map(file => `${file.title} (${actionLabels[file.action] || 'diproses'})`);
+        
+        const output = formattedFiles.length > 1
+          ? formattedFiles.slice(0, -1).join(', ') + ' dan ' + formattedFiles.slice(-1)
+          : formattedFiles[0] || '';
+  
+        return output;
+      } else {
+        return "";
+      }
+    },
+    openScrapingModal(file){
+      this.scrapingText = file.extracted_text;
+      this.url = file.url;
+      this.showScrapingModal = true;
     },
     openAddModal() {
       this.showAddModal = true;

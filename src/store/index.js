@@ -5,7 +5,8 @@ const store = createStore({
     state: {
         userCount: 0,
         isConnected: false,
-        userAuth: {}
+        userAuth: {},
+        totalChat: 0
     },
     mutations: {
         setUserCount(state, count) {
@@ -19,6 +20,9 @@ const store = createStore({
         },
         clearUserAuth(state) {
             state.userAuth = {};
+        },
+        setTotalChat(state, totalChat) {
+            state.totalChat = totalChat;
         }
     },
     actions: {

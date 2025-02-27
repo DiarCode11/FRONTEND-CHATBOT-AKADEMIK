@@ -16,7 +16,7 @@
               <!-- Dropdown Trigger -->
               <router-link to="/admin/dataset-management" @click="toggleDropdown" 
                 class="block w-full text-left py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out"
-                :class="{ 'text-sky-500 font-semibold bg-white': isNavActive('/admin/dataset-management'), 'text-white': !isNavActive('/admin/dataset-management') }"
+                :class="{ 'text-sky-500 font-semibold bg-white': $route.path.startsWith('/admin/dataset-management'), 'text-white': !$route.path.startsWith('/admin/dataset-management') }"
                 >
                   <div class="flex items-center justify-between">
                     <div>
@@ -33,20 +33,25 @@
                 <ul v-if="dropdownActive" class="mt-2 space-y-2 pl-6">
                   <li>
                     <router-link to="/admin/dataset-management/pdf" 
-                      class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out text-white">
+                      class="block py-2 px-4 rounded transition-all duration-200 ease-in-out text-white"
+                      :class="{ 'text-white font-bold': isNavActive('/admin/dataset-management/pdf'), 'text-white': !isNavActive('/admin') }">
                       Dataset PDF
                     </router-link>
                   </li>
                   <li>
                     <router-link to="/admin/dataset-management/link" 
-                      class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out text-white">
+                      class="block py-2 px-4 rounded transition-all duration-200 ease-in-out text-white"
+                      :class="{ 'text-white font-bold': isNavActive('/admin/dataset-management/link'), 'text-white': !isNavActive('/admin') }">
                       Dataset Link
                     </router-link>
                   </li>
                   <li>
                     <router-link to="/admin/dataset-management/vectordb" 
-                      class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out text-white">
-                      Basis Data Vektor
+                      class="block py-2 px-4 rounded transition-all duration-200 ease-in-out text-white"
+                      :class="{ 'text-white font-bold': isNavActive('/admin/dataset-management/vectordb'), 'text-white': !isNavActive('/admin') }">
+                      <p class="relative">
+                        Basis Data Vektor
+                      </p>
                     </router-link>
                   </li>
                 </ul>
@@ -54,25 +59,18 @@
             </li>
             <li>
               <router-link to="/admin/history-chat-process" 
-                class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out"
+                class="block py-2 px-4 rounded transition-all duration-200 ease-in-out"
                 :class="{ 'text-sky-500 font-semibold bg-white': isNavActive('/admin/history-chat-process'), 'text-white': !isNavActive('/admin/history-chat-process') }">
                 <i class="bi bi-chat-left-dots pr-3"></i> History Chat Process
               </router-link>
             </li>
-            <li>
+            <!-- <li>
               <router-link to="/admin/feedback" 
-                class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out"
+                class="block py-2 px-4 rounded transition-all duration-200 ease-in-out"
                 :class="{ 'text-sky-500 font-semibold bg-white': isNavActive('/admin/feedback'), 'text-white': !isNavActive('/admin/feedback') }">
                 <i class="bi bi-chat-right-heart pr-3"></i> Feedback
               </router-link>
-            </li>
-            <li>
-              <router-link to="/admin/logout" 
-                class="block py-2 px-4 rounded hover:font-semibold transition-all duration-200 ease-in-out"
-                :class="{ 'text-sky-500 font-semibold bg-white': isNavActive('/admin/logout'), 'text-white': !isNavActive('/admin/logout') }">
-                <i class="bi bi-box-arrow-left pr-3"></i> Logout
-              </router-link>
-            </li>
+            </li> -->
           </ul>
         </nav>
       </aside>
@@ -81,13 +79,12 @@
       <div class="fixed z-10 bottom-0 left-0 w-full bg-sky-500 h-10  md:hidden">
         <div class="w-full bg-white h-5"></div>
       </div>
-      <nav class="fixed z-20 bottom-0 left-0 w-full h-10 grid grid-cols-4 md:hidden transition-all duration-500 ease-in-out">
+      <nav class="fixed z-20 bottom-0 left-0 w-full h-10 grid grid-cols-3 md:hidden transition-all duration-500 ease-in-out">
         <router-link to="/admin" class="text-xl flex justify-center items-center"
           :class="{ 
             'text-sky-500 bg-white rounded-br-2xl': isNavActive('/admin'), 
-            'text-white bg-sky-500 rounded-tr-2xl': isNavActive('/admin/dataset-management'), 
-            'text-white bg-sky-500 ': isNavActive('/admin/history-chat-process'),
-            'text-white bg-sky-500': isNavActive('/admin/feedback'),
+            'text-white bg-sky-500 rounded-tr-2xl': $route.path.startsWith('/admin/dataset-management'), 
+            'text-white bg-sky-500 ': isNavActive('/admin/history-chat-process')
           }"
         >
           <i class="bi bi-speedometer2 transition-all duration-300 ease-out"
@@ -99,42 +96,26 @@
         <router-link to="/admin/dataset-management" class="text-xl flex justify-center items-center"
           :class="{ 
             'text-white bg-sky-500 rounded-tl-2xl ': isNavActive('/admin'), 
-            'text-sky-500 bg-white rounded-b-2xl ': isNavActive('/admin/dataset-management'), 
+            'text-sky-500 bg-white rounded-b-2xl ': $route.path.startsWith('/admin/dataset-management'), 
             'text-white bg-sky-500 rounded-tr-2xl ': isNavActive('/admin/history-chat-process'),
-            'text-white bg-sky-500 ': isNavActive('/admin/feedback'),
           }"
         >
           <i class="bi bi-database transition-all duration-300 ease-out"
             :class="{
-              'text-3xl': isNavActive('/admin/dataset-management')
+              'text-3xl': $route.path.startsWith('/admin/dataset-management')
             }"
           ></i>
         </router-link>
         <router-link to="/admin/history-chat-process" class="text-xl flex justify-center items-center"
           :class="{ 
             'text-white bg-sky-500': isNavActive('/admin'), 
-            'text-white bg-sky-500 rounded-tl-2xl ': isNavActive('/admin/dataset-management'), 
-            'text-sky-500 bg-white rounded-b-2xl ': isNavActive('/admin/history-chat-process'),
-            'text-white bg-sky-500 rounded-tr-2xl': isNavActive('/admin/feedback'),
+            'text-white bg-sky-500 rounded-tl-2xl ': $route.path.startsWith('/admin/dataset-management'), 
+            'text-sky-500 bg-white rounded-bl-2xl ': isNavActive('/admin/history-chat-process')
           }"
         >
           <i class="bi bi-chat-left-dots transition-all duration-300 ease-out"
             :class="{
               'text-3xl': isNavActive('/admin/history-chat-process')}"
-          ></i>
-        </router-link>
-        <router-link to="/admin/feedback" class="text-xl flex justify-center items-center"
-          :class="{ 
-            'text-white bg-sky-500 ': isNavActive('/admin'), 
-            'text-white bg-sky-500': isNavActive('/admin/dataset-management'), 
-            'text-white bg-sky-500 rounded-tl-2xl ': isNavActive('/admin/history-chat-process'),
-            'text-sky-500 bg-white rounded-bl-2xl': isNavActive('/admin/feedback'),
-          }"
-        >
-          <i class="bi bi-chat-right-heart transition-all duration-300 ease-out"
-            :class="{
-              'text-3xl': isNavActive('/admin/feedback')
-            }"
           ></i>
         </router-link>
       </nav>
@@ -214,9 +195,11 @@ export default {
         if (response.ok) {
           this.isAuthenticated = data.status;
           console.log("Berhasil terhubung ke admin");
+          console.log("Pesan dari server: ", data);
         } else {
           this.isAuthenticated = data.status;
           console.log("Gagal terhubung ke admin");
+          console.log("Pesan dari server: ", data);
         }
       } catch (error) {
         this.isAuthenticated = false;

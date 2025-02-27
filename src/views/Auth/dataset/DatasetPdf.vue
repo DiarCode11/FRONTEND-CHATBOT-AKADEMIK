@@ -5,6 +5,7 @@
     <Modal
         v-model:showModal="showAddModal"
         @close="closeModal"
+        :size="'sm'"
     >
         <form action="" @submit.prevent="sendData">
             <div class="flex justify-center pb-4">
@@ -77,6 +78,7 @@
     <Modal
         v-model:showModal="showEditModal"
         @close="closeModal"
+        :size="'sm'"
     >
         <form action="" @submit.prevent="updateData">
             <div class="flex justify-center pb-4">
@@ -151,43 +153,41 @@
     <!-- Modal Delete -->
     <Modal
         v-model:showModal="showDeleteModal"
+        :size="'sm'"
         :closeModal="closeModal"
     >
-        <div class="bg-red-100 p-4 rounded-lg mb-5 flex gap-3 items-center">
-            <span class="text-red-600">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                    <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
-                </svg>
-            </span>
-            <h1 class="text-lg font-semibold text-red-600">Hapus Dataset?</h1>
-        </div>
-        <p class="text-center text-gray-700">Yakin ingin menghapus dataset {{ dataDeleted.filename }}?. Perubahan akan bersifat permanen</p>
-        <div class="flex justify-around pt-4">
-            <button @click="deleteData" class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-700 transition-all duration-500 ease-in-out hover:scale-105">
-                Yakin
-            </button>
-            <button @click="closeModal" class="text-red-600 border-red-400 border-2 px-6 py-2 rounded-lg hover:scale-105 transition-all duration-500 ease-in-out">
-                Batal
-            </button>
-        </div>
+      <span class="text-red-600 flex justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+        </svg>
+        </span>
+      <h1 class="text-xl font-bold py-6 text-center">Hapus dataset</h1>
+      <p class="text-center text-gray-700">
+        Yakin ingin menghapus dataset {{ dataDeleted.filename }}? Perubahan akan bersifat permanen
+      </p>
+      <div class="flex justify-center gap-7 pt-4">
+          <button @click="deleteData" class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-700 transition-all duration-500 ease-in-out hover:scale-105">
+              Yakin
+          </button>
+          <button @click="closeModal" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:scale-105 transition-all duration-500 ease-in-out">
+              Batal
+          </button>
+      </div>
     </Modal>
 
-  <div v-if="showAlert">
-    <div class="bg-yellow-50 border-2 border-yellow-500 rounded-lg mb-5 gap-3 items-center text-yellow-600">
-      <div @click.stop="showAlert = false" class="w-full flex justify-end pr-2 pt-2 cursor-pointer">
-        <CloseIcon />
+  <SuccessAlert :show_alert="showSuccessAlert" :message="successMessage" @close="showSuccessAlert = false" />
+  <WarningStaticAlert :is-active="showWarningAlert" @close="showWarningAlert = false">
+    <div class="p-6">
+      <div class="flex pb-2 gap-x-3 items-center text-lg font-bold text-orange-600">
+        <WarningIcon :size="6" />
+        <h2>Perbarui Basis Data Vektor</h2>
       </div>
-      <div class="flex gap-4 pb-4 pl-4">
-        <span>
-          <WarningIcon />
-        </span>
-        <div class="text-xs">
-          <h1 class="text-sm font-semibold pb-1">Sinkronisasi dengan database vektor</h1>
-          Sinkronisasi diperlukan agar chatbot mengetahui informasi terbaru dari dataset. Silahkan sinkronisasi terlebih dahulu melalui menu basis data vektor. 
-        </div>
+      <div class="flex flex-col gap-1 pr-3">
+        <p>Terdeteksi modifikasi pada dataset PDF namun basis data vektor belum diperbarui</p>
+        <p><strong>Modifikasi: </strong> {{ not_updated_pdf }}</p>
       </div>
     </div>
-  </div>
+  </WarningStaticAlert>
   <p class="text-sm text-gray-400">Admin /</p>
   <h1 class="text-xl font-bold pb-6">Dataset Management/PDF</h1>
   <div v-if="dataStatus == undefined" class="relative flex bg-white rounded-3xl shadow-lg justify-center items-center h-1/2">
@@ -196,7 +196,7 @@
   <div v-else  class="relative flex gap-4 bg-white rounded-3xl shadow-lg flex-col">
     <span class="bg-gradient-to-r from-white to-transparent w-5 h-[calc(100%-100px)] absolute mt-10 left-0"></span>
 		<span class="bg-gradient-to-r from-transparent to-white w-5 h-[calc(100%-120px)] absolute mt-10 right-0"></span>
-    <div class="w-full flex justify-between items-center px-6 pb-2 pt-7">
+    <div class="w-full flex justify-between items-center px-6 pb-2 pt-7 gap-3">
       <div class="">
         <button
           @click="openAddModal()"
@@ -206,10 +206,11 @@
           <p class="md:block hidden">Tambah</p>
         </button>
       </div>
-      <div class="relative">
+      <div class="relative ">
         <input
           type="text"
           placeholder="Search..."
+          v-model="search_query"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:outline-none block w-full pl-10 p-2"
         />
         <svg
@@ -311,6 +312,9 @@ import Modal from "@/components/modal/Modal.vue";
 import WarningIcon from "@/components/icons/WarningIcon.vue";
 import { getPagination } from "@/scripts/Pagination";
 import Cookies from "js-cookie";
+import SuccessAlert from "@/components/alert/SuccessAlert.vue";
+import CloseButton from "@/components/buttons/CloseButton.vue";
+import WarningStaticAlert from "@/components/alert/WarningStaticAlert.vue";
 
 export default {
   name: "DatasetManagementView",
@@ -320,7 +324,10 @@ export default {
     DeleteButton,
     Modal,
     CloseIcon,
-    WarningIcon
+    WarningIcon,
+    SuccessAlert,
+    CloseButton,
+    WarningStaticAlert
   },
   data() {
     return {
@@ -339,7 +346,12 @@ export default {
       file_data: [],
       ipAddress: import.meta.env.VITE_SERVER_URL,
       errorMessage: "",
-      showAlert: true
+      showAlert: true,
+      showSuccessAlert: false,
+      successMessage: "",
+      search_query: "",
+      not_updated_pdf: "",
+      showWarningAlert: false
     };
   },
   async created() {
@@ -350,16 +362,30 @@ export default {
     console.log(this.year)
   },
   computed: {
+    searchData() {
+      return this.file_data.filter(item =>
+        Object.values(item).some(value =>
+          value.toString().toLowerCase().includes(this.search_query.toLowerCase())
+        )
+      )
+    },
     checkData() {
       return this.file_data.length > 0;
     },
     totalPages() {
-      return Math.ceil(this.file_data.length / this.items_per_page);
+      if (this.search_query === "") {
+        console.log("Total pages: ", Math.ceil(this.file_data.length / this.items_per_page));
+        return Math.ceil(this.file_data.length / this.items_per_page);
+      }
+      return Math.ceil(this.searchData.length / this.items_per_page);
     },
     paginatedData() {
       const start = (this.current_page - 1) * this.items_per_page;
       const end = start + this.items_per_page;
-      return this.file_data.slice(start, end);
+      if (this.search_query === "") {
+        return this.file_data.slice(start, end);
+      }
+      return this.searchData.slice(start, end);
     },
     visiblePages() {
       // Menggunakan fungsi getPagination
@@ -381,6 +407,10 @@ export default {
 
         if (response.ok) {
           console.log("Data JSON yang diterima: ", data_json.data);
+          if (data_json.not_updated_pdf.length > 0) {
+            this.not_updated_pdf = this.pdf_not_updated_msg(data_json.not_updated_pdf);
+            this.showWarningAlert = true
+          }
           if (data_json.data.length > 0) {
             this.file_data = data_json.data;
             this.dataStatus = true;
@@ -421,7 +451,11 @@ export default {
 
         if (response.ok) {
             this.closeModal();
-            this.file_data.push(data_json.data);
+            this.file_data.unshift(data_json.data);
+            this.showSuccessAlert = true;
+            this.successMessage = "Data berhasil ditambahkan";
+            this.not_updated_pdf = this.pdf_not_updated_msg(data_json.not_updated_pdf);
+            this.showWarningAlert = true;
             console.log("Data JSON yang dikirim: ", data_json.data);
         } else {
             this.errorMessage = data_json.message;
@@ -461,6 +495,10 @@ export default {
           this.closeModal();
           console.log("Data JSON sebelumnya: ", this.file_data[0]);
           console.log("Data JSON yang diterima: ", data_json.data_updated.id);
+          this.showSuccessAlert = true;
+          this.successMessage = "Data berhasil diperbarui";
+          this.not_updated_pdf = this.pdf_not_updated_msg(data_json.not_updated_pdf);
+          this.showWarningAlert = true;
 
           let newData = data_json.data_updated;
 
@@ -502,7 +540,11 @@ export default {
 
         if (response.ok) {
           this.file_data = this.file_data.filter(item => item.id !== this.dataDeleted.id);
+          this.showSuccessAlert = true;
+          this.successMessage = "Data berhasil dihapus";
           this.closeModal();
+          this.not_updated_pdf = this.pdf_not_updated_msg(data_json.not_updated_pdf);
+          this.showWarningAlert = true;
         } else {
           this.errorMessage = data_json.message;
           console.log("Response server saat mengambil data JSON: ", data_json);
@@ -512,6 +554,25 @@ export default {
         this.errorMessage = "Gagal terhubung ke server";
         console.error("Error saat mengambil data JSON: ", error);
         console.log("Gagal terhubung ke server");
+      }
+    },
+    pdf_not_updated_msg(data){
+      if (data.length > 0) {
+        const actionLabels = {
+          delete: "dihapus",
+          add: "ditambahkan",
+          update: "diperbarui"
+        };
+        
+        const formattedFiles = data.map(file => `${file.title} (${actionLabels[file.action] || 'diproses'})`);
+        
+        const output = formattedFiles.length > 1
+          ? formattedFiles.slice(0, -1).join(', ') + ' dan ' + formattedFiles.slice(-1)
+          : formattedFiles[0] || '';
+  
+        return output;
+      } else {
+        return "";
       }
     },
     openAddModal() {

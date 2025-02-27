@@ -23,7 +23,7 @@
         >About</router-link>
         <router-link v-if="role === 'admin'"
           to="/admin"
-          :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/admin') || isNavActive('/admin/dataset-management') || isNavActive('/admin/history-chat-process') || isNavActive('/admin/feedback') || isNavActive('/admin/feedback') }" @click="toggleSlider()"
+          :class="{ 'font-bold transition-all duration-300 ease-in-out': $route.path.startsWith('/admin') }" @click="toggleSlider()"
         >Administrator</router-link>
         <button
             class="bg-sky-600 mt-10 text-white px-6 py-2 rounded-lg hover:scale-105 hover:bg-sky-700 transition duration-200 ease-in-out"
@@ -39,7 +39,7 @@
           <BarButton />
         </div>
         <div class="hidden md:flex">
-          <img :src="logoImage" class="h-10" alt="">
+          <img :src="logoImage" class="h-14" alt="">
         </div>
         <div class="hidden md:flex space-x-4">
           <router-link
@@ -50,9 +50,9 @@
             to="/about"
             :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/about') }"
           >About</router-link>
-          <router-link v-if="role === 'admin'"
+          <router-link v-if="role === 'admin' && csrf_token"
             to="/admin"
-            :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/admin') || isNavActive('/admin/dataset-management') || isNavActive('/admin/history-chat-process') || isNavActive('/admin/feedback') || isNavActive('/admin/feedback') }"
+            :class="{ 'font-bold transition-all duration-300 ease-in-out': $route.path.startsWith('/admin') }"
           >Administrator</router-link>
         </div>
         <div v-if="!username && !role">
@@ -104,7 +104,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import Logo from "@/assets/logo/logo.jpg"
+import Logo from "@/assets/logo/logo.png"
 import LoginModal from "./modal/LoginModal.vue";
 import BarButton from "./buttons/BarButton.vue";
 import CloseButton from "./buttons/CloseButton.vue";
@@ -223,11 +223,9 @@ export default {
     },
     updatePassword(value) {
       this.password = value;
-      console.log(this.password)
     },
     updateConfirmPassword(value) {
       this.confirmPassword = value;
-      console.log(this.confirmPassword)
     },
     closePopup(event) {
       if (this.$refs.popupContainer && !this.$refs.popupContainer.contains(event.target)) {

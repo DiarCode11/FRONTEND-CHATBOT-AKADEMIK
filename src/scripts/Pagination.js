@@ -3,14 +3,14 @@ export function getPagination(total_page, current_page) {
     const pages = [];
     
     // Jika jumlah halaman kurang dari atau sama dengan 5, tampilkan semua halaman
-    if (total_page <= 5) {
+    if (total_page <= 4) {
         console.log("Fungsi pertama dieksekusi");
         for (let i = 1; i <= total_page; i++) {
             pages.push(i);
         }
     } else {
         // Jika berada di awal rentang halaman
-        if (current_page < 5) {
+        if (current_page < 4) {
             console.log("Fungsi kedua dieksekusi");
             for (let i = 1; i <= 5; i++) {
                 pages.push(i);
@@ -32,7 +32,7 @@ export function getPagination(total_page, current_page) {
             console.log("Fungsi keempat dieksekusi");
             pages.push(1);
             pages.push('...');
-            for (let i = current_page - 2; i <= current_page + 2; i++) {
+            for (let i = current_page - 1; i <= current_page + 1; i++) {
                 pages.push(i);
             }
             pages.push('...');
