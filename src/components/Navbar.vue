@@ -39,7 +39,7 @@
           <BarButton />
         </div>
         <div class="hidden md:flex">
-          <img :src="logoImage" class="h-10" alt="">
+          <img :src="logoImage" class="h-14" alt="">
         </div>
         <div class="hidden md:flex space-x-4">
           <router-link
@@ -104,7 +104,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import Logo from "@/assets/logo/logo.jpg"
+import Logo from "@/assets/logo/logo.png"
 import LoginModal from "./modal/LoginModal.vue";
 import BarButton from "./buttons/BarButton.vue";
 import CloseButton from "./buttons/CloseButton.vue";
