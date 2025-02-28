@@ -55,7 +55,7 @@
             :class="{ 'font-bold transition-all duration-300 ease-in-out': $route.path.startsWith('/admin') }"
           >Administrator</router-link>
         </div>
-        <div v-if="userAuth.username == null && userAuth.role == null">
+        <div v-if="username == null && role == null">
           <button
             class="bg-sky-600 text-white px-6 py-2 rounded-lg hover:scale-105 hover:bg-sky-700 transition duration-200 ease-in-out"
             @click="openModal()"
@@ -63,7 +63,7 @@
             Masuk
           </button>
         </div>
-        <div v-else-if="userAuth.username && userAuth.role" class="relative">
+        <div v-else-if="username && role" class="relative">
           <transition name="scale">
             <div v-show="showPopupUser" ref="popupContainer" class="absolute top-10 right-0 z-50 bg-white shadow-md rounded-lg border w-56 p-4">
               <div>
@@ -165,6 +165,7 @@ export default {
         });
         
         this.removeAllCookies();
+        sessionStorage.clear();
 
         const data = await response.json();
         console.log(this.csrf_token);

@@ -172,7 +172,7 @@ import EmailIcon from "@/components/icons/EmailIcon.vue";
 import EyeButton from "@/components/buttons/EyeButton.vue";
 import PersonIcon from "@/components/icons/PersonIcon.vue";
 import DangerIcon from "@/components/icons/DangerIcon.vue";
-import Cookies from 'js-cookie';
+import { mapActions } from "vuex";
 
 export default {
   name: "LoginModal",
@@ -227,6 +227,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['loadUserAuthFromSession']),
     resetData() {
       this.showPassword = false;
       this.showConfirmPassword = false;
@@ -276,8 +277,14 @@ export default {
             // Jika login berhasil
             this.errorMessages = '';
 
-            // Simpan data ke Vuex
-            this.$store.commit('setUserAuth', data.user);
+            // // Simpan data ke Vuex
+            // this.$store.commit('setUserAuth', data.user);
+
+            // Simpan ke session Storage
+            sessionStorage.setItem('username', data.user.username);
+            sessionStorage.setItem('role', data.user.role);
+
+            this.loadUserAuthFromSession();
 
             // Simpan data user ke localStorage
             // localStorage.setItem('akasha_data', JSON.stringify(data.user));

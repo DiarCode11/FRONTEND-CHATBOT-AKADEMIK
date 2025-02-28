@@ -31,7 +31,8 @@
     "vue-router": "^4.5.0",
     "vue-textarea-autosize": "^1.1.1",
     "vuetify": "^3.7.5",
-    "vuex": "^4.1.0"
+    "vuex": "^4.1.0",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",

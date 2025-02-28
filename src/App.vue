@@ -78,21 +78,14 @@ export default {
           console.log(data);
           this.username = data.username;
           this.role = data.role;
-          this.setUserAuth({
-            id: data.id,
-            username: data.username,
-            role: data.role
-          })
+          sessionStorage.setItem("username", data.username);
+          sessionStorage.setItem("role", data.role);
           
           this.$nextTick(() => {
               console.log("Isi userAuth setelah update:", this.$store.state.userAuth);
           });
         } else {
-          this.setUserAuth({
-            id: null,
-            username: null,
-            role: null
-          });
+
           this.username = null;
           this.role = null;
           console.log(data);
@@ -101,11 +94,6 @@ export default {
         console.error(error);
         this.username = null;
         this.role = null;
-        this.setUserAuth({
-          id: null,
-          username: null,
-          role: null
-        });
       }
     }
   }

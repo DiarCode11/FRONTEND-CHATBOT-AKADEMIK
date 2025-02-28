@@ -6,9 +6,8 @@ const store = createStore({
         userCount: 0,
         isConnected: false,
         userAuth: {
-            id: "",
-            username: "",
-            role: ""
+            username: sessionStorage.getItem("username") || null,
+            role: sessionStorage.getItem("role") || null
         },
         totalChat: 0
     },
@@ -30,13 +29,12 @@ const store = createStore({
         }
     },
     actions: {
-        loadUserAuthFromCookies({ commit }) {
-            const username = Cookies.get("username");
-            const role = Cookies.get("role");
-            const csrf_token = Cookies.get("csrf_access_token");
+        loadUserAuthFromSession({ commit }) {
+            const username = sessionStorage.getItem("username");
+            const role = sessionStorage.getItem("role");
 
             if (username && role) {
-                commit("setUserAuth", { username, role, csrf_token });
+                commit('')
             }
         }
     }
