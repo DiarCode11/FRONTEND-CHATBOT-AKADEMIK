@@ -1,5 +1,5 @@
 <template>
-	<div class="flex justify-end bubble-chat pb-4" >
+	<div class="flex justify-end bubble-chat py-4" >
 		<span class="w-20">
 		</span>
 		<div class="bg-sky-500 text-white rounded-l-2xl rounded-br-2xl shadow-md break-words whitespace-pre-wrap max-w-full overflow-hidden lg:max-w-xl">

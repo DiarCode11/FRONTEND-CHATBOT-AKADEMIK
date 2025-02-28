@@ -144,6 +144,7 @@
 import Cookies from 'js-cookie';
 import ForbiddenView from '@/views/Error/ForbiddenView.vue';
 import DisconnectIcon from '@/components/icons/DisconnectIcon.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: "AdminView",
@@ -166,6 +167,7 @@ export default {
     isConnectedStatus() {
       return this.$store.state.isConnected;
     }, 
+    ...mapState(['userAuth']),
   },
   methods: {
     isNavActive(route){
@@ -175,6 +177,7 @@ export default {
       this.dropdownActive = !this.dropdownActive; // Toggle dropdown
     },
     async connectToAdmin() {
+      console.log("Menghubungkan ke admin");
       console.log(Cookies.get("csrf_access_token"));
       try {
         const response = await fetch(this.ipAddress + "/users/admin", {

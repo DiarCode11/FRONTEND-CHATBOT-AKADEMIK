@@ -5,7 +5,11 @@ const store = createStore({
     state: {
         userCount: 0,
         isConnected: false,
-        userAuth: {},
+        userAuth: {
+            id: "",
+            username: "",
+            role: ""
+        },
         totalChat: 0
     },
     mutations: {
@@ -16,10 +20,10 @@ const store = createStore({
             state.isConnected = isConnected;
         },
         setUserAuth(state, userAuth) {
-            state.userAuth = userAuth;
+            Object.assign(state.userAuth, userAuth);
         },
         clearUserAuth(state) {
-            state.userAuth = {};
+            state.userAuth = { id: "", username: "", role: "" };
         },
         setTotalChat(state, totalChat) {
             state.totalChat = totalChat;
