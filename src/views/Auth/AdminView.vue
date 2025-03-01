@@ -3,7 +3,7 @@
       <!-- Navbar Desktop -->
       <aside class="bg-sky-500 p-4 overflow-auto hidden md:block">
         <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
-        <nav>
+        <nav class="pt-5">
           <ul class="space-y-4 transform transition-transform duration-200 ease-in-out">
             <li>
               <router-link to="/admin" 
