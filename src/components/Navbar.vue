@@ -153,6 +153,10 @@ export default {
       }
     },
     async handleLogout() {
+      this.removeAllCookies();
+      sessionStorage.clear();
+      this.$store.commit("clearUserAuth");
+      
       try {
         console.log("mencoba logout")
         const response = await fetch(this.ipAddress + "/users/logout", {
@@ -164,10 +168,6 @@ export default {
           credentials: 'include',
         });
         
-        this.removeAllCookies();
-        sessionStorage.clear();
-        this.$store.commit("clearUserAuth");
-
         const data = await response.json();
         if (response.ok) {
           console.log("Logout berhasil");
