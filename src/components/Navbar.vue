@@ -166,16 +166,16 @@ export default {
         
         this.removeAllCookies();
         sessionStorage.clear();
+        this.$store.commit("clearUserAuth");
 
         const data = await response.json();
         console.log(this.csrf_token);
         console.log(data);
-        this.$store.commit("clearUserAuth");
       }
       catch (error) {
         console.error(error);
       }
-      window.location.reload();
+      // window.location.reload();
 
     },
     handleScroll() {
