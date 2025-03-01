@@ -154,12 +154,12 @@ export default {
     },
     async handleLogout() {
       try {
+        console.log("mencoba logout")
         const response = await fetch(this.ipAddress + "/users/logout", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
-            'Cache-Control': 'no-cache, no-store, must-revalidate'
+            'X-CSRF-TOKEN': Cookies.get("csrf_access_token")
           },
           credentials: 'include',
         });
@@ -169,7 +169,12 @@ export default {
         this.$store.commit("clearUserAuth");
 
         const data = await response.json();
-        console.log(this.csrf_token);
+        if (response.ok) {
+          console.log("Logout berhasil");
+          console.log(data);
+        } else {
+          console.log("Logout gagal");
+        }
         console.log(data);
       }
       catch (error) {
