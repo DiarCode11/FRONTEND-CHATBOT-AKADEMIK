@@ -276,12 +276,9 @@ export default {
           if (response.ok) {
             // Jika login berhasil
             this.errorMessages = '';
-            const csrf_token = response.headers.get("X-CSRF-TOKEN");
-            if (csrf_token) {
-              console.log("CSRF Token:", csrf_token);
-              sessionStorage.setItem("csrf_access_token", csrf_token);
-            }
 
+            console.log("Isi cookie: ", document.cookie)
+            
             // Simpan ke session Storage
             sessionStorage.setItem('username', data.user.username);
             sessionStorage.setItem('role', data.user.role);
@@ -291,7 +288,7 @@ export default {
             // Simpan data user ke localStorage
             // localStorage.setItem('akasha_data', JSON.stringify(data.user));
             console.log('Login berhasil:', data);
-            window.location.reload();
+            // window.location.reload();
             this.closeModal();
           } else {
             this.errorMessages = data['message'];
