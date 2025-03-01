@@ -166,7 +166,7 @@ export default {
         
         const data = await response.json();
         if (response.ok) {
-          sessionStorage.clear();
+          // sessionStorage.clear();
           this.$store.commit("clearUserAuth");
           console.log("Logout berhasil");
           console.log(data);
