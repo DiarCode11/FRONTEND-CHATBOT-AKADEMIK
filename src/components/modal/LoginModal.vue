@@ -276,9 +276,11 @@ export default {
           if (response.ok) {
             // Jika login berhasil
             this.errorMessages = '';
-
-            // // Simpan data ke Vuex
-            // this.$store.commit('setUserAuth', data.user);
+            const csrf_token = response.headers.get("X-CSRF-TOKEN");
+            if (csrf_token) {
+              console.log("CSRF Token:", csrf_token);
+              sessionStorage.setItem("csrf_access_token", csrf_token);
+            }
 
             // Simpan ke session Storage
             sessionStorage.setItem('username', data.user.username);
