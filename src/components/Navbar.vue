@@ -153,12 +153,8 @@ export default {
       }
     },
     async handleLogout() {
-      sessionStorage.clear();
-      this.$store.commit("clearUserAuth");
-
       try {
         console.log("mencoba logout")
-        console.log(Cookies.get("csrf_access_token"));
         const response = await fetch(this.ipAddress + "/users/logout", {
           method: 'POST',
           headers: {
@@ -170,6 +166,8 @@ export default {
         
         const data = await response.json();
         if (response.ok) {
+          sessionStorage.clear();
+          this.$store.commit("clearUserAuth");
           console.log("Logout berhasil");
           console.log(data);
         } else {
