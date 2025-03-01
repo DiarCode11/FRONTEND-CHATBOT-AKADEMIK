@@ -163,7 +163,7 @@ export default {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token")
+            'X-CSRF-TOKEN': sessionStorage.getItem("csrf_token"),
           },
           credentials: 'include',
         });

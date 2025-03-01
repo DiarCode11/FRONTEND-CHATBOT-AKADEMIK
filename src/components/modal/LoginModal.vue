@@ -282,6 +282,7 @@ export default {
             // Simpan ke session Storage
             sessionStorage.setItem('username', data.user.username);
             sessionStorage.setItem('role', data.user.role);
+            sessionStorage.setItem('token', data.csrf_token);
 
             this.loadUserAuthFromSession();
 
