@@ -17,6 +17,17 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 3000,
+    port: 5002,
+  },
+  preview: {
+    host: '0.0.0.0',
+    port: 5002
+  },
+  build: {
+    terserOptions: {
+      compress: {
+        drop_console: true
+      }
+    }
   }
 })
