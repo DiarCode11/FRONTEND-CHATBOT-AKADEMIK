@@ -158,7 +158,7 @@
       <div
         class="bg-white w-8 h-8 flex justify-center items-center rounded-full shadow-xl"
       >
-        <i class="bi bi-chat-right-heart-fill text-gray-800 translate-y-0.5"></i>
+        <i class="bi bi-person-plus-fill text-gray-800"></i>
       </div>
       <h1 class="pt-4 text-lg font-bold">{{ newUsersLogin }}</h1>
       <p>Pengguna Baru</p>
@@ -169,10 +169,10 @@
       <div
         class="bg-white w-8 h-8 flex justify-center items-center rounded-full shadow-xl"
       >
-        <i class="bi bi-hand-thumbs-up-fill text-gray-800"></i>
+        <i class="bi bi-file-earmark-plus-fill text-gray-800"></i>
       </div>
-      <h1 class="pt-4 text-lg font-bold">100</h1>
-      <p>Like</p>
+      <h1 class="pt-4 text-lg font-bold">{{ newDatasetTotal }}</h1>
+      <p>Dataset baru</p>
     </div>
   </div>
   <div class="relative flex gap-4 bg-white rounded-3xl shadow-lg flex-col">
@@ -317,6 +317,7 @@ export default {
       search_query: "",
       current_page: 1,
       items_per_page: 5,
+      newDatasetTotal: 0,
     }
   },
   computed: {
@@ -407,6 +408,7 @@ export default {
               console.log(data_json.data);
               this.allUsers = data_json.data;
               this.newUsersLogin = data_json.new_users_login;
+              this.newDatasetTotal = data_json.total_dataset_added
           } else {
               console.log("Error: ", data_json);
           }

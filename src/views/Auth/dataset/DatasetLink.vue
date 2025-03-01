@@ -714,9 +714,15 @@ export default {
         
         const formattedFiles = data.map(file => `${file.title} (${actionLabels[file.action] || 'diproses'})`);
         
-        const output = formattedFiles.length > 1
+        if (formattedFiles.length > 3) {
+          const displayed = formattedFiles.slice(0, 3).join(', ');
+          return `${displayed} dan ${formattedFiles.length - 3} lainnya`;
+
+        } else {
+          return formattedFiles.length > 1
           ? formattedFiles.slice(0, -1).join(', ') + ' dan ' + formattedFiles.slice(-1)
           : formattedFiles[0] || '';
+        }
   
         return output;
       } else {

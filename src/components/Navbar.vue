@@ -25,7 +25,7 @@
           to="/admin"
           :class="{ 'font-bold transition-all duration-300 ease-in-out': $route.path.startsWith('/admin') }" @click="toggleSlider()"
         >Administrator</router-link>
-        <button
+        <button v-if="!username && !role"
             class="bg-sky-600 mt-10 text-white px-6 py-2 rounded-lg hover:scale-105 hover:bg-sky-700 transition duration-200 ease-in-out"
             @click="openModal()"
           >
@@ -166,7 +166,7 @@ export default {
         
         const data = await response.json();
         if (response.ok) {
-          // sessionStorage.clear();
+          sessionStorage.clear();
           this.$store.commit("clearUserAuth");
           console.log("Logout berhasil");
           console.log(data);
@@ -178,7 +178,7 @@ export default {
       catch (error) {
         console.error(error);
       }
-      // window.location.reload();
+      window.location.reload();
 
     },
     handleScroll() {

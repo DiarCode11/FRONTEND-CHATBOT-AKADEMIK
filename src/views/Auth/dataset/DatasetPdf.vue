@@ -73,7 +73,7 @@
                     <p v-if="selectedFile == null">Pilih File</p>
                 </div>
             </div>
-            <button type="submit" :class="[isLoading ? 'cursor-not-allowed bg-gray-500' : 'cursor-pointer bg-sky-500 ']" class="w-full mt-6 py-2 h-12 rounded-md text-white font-semibold">
+            <button type="submit" :class="[isLoading ? 'cursor-not-allowed bg-gray-400' : 'cursor-pointer bg-sky-500 ']" class="w-full mt-6 py-2 h-12 rounded-md text-white font-semibold">
               <div v-if="isLoading" class="w-full h-full justify-center flex items-center">
                 <span class="lds-dual-ring text-white inset-0 flex justify-center items-center"></span>
               </div>
@@ -191,7 +191,7 @@
 
   <SuccessAlert :show_alert="showSuccessAlert" :message="successMessage" @close="showSuccessAlert = false" />
   <WarningStaticAlert :is-active="showWarningAlert" @close="showWarningAlert = false">
-    <div class="p-6">
+    <div class="p-3">
       <div class="flex pb-2 gap-x-3 items-center text-lg font-bold text-orange-600">
         <WarningIcon :size="6" />
         <h2>Perbarui Basis Data Vektor</h2>
@@ -480,6 +480,7 @@ export default {
             console.log("Response server saat mengambil data JSON: ", data_json);
         }
       } catch (error) {
+        this.isLoading = false;
         this.errorMessage = "Gagal terhubung ke server";
         console.error("Error saat mengambil data JSON: ", error);
         console.log("Gagal terhubung ke server");
@@ -539,6 +540,7 @@ export default {
 
         console.log("Response server saat mengambil data JSON: ", data_json);
       } catch (error) {
+        this.isLoading = false;
         this.errorMessage = "Gagal terhubung ke server";
         console.error("Error saat mengambil data JSON: ", error);
         console.log("Gagal terhubung ke server");
@@ -577,21 +579,24 @@ export default {
         console.log("Gagal terhubung ke server");
       }
     },
-    pdf_not_updated_msg(data){
+    pdf_not_updated_msg(data) {
       if (data.length > 0) {
-        const actionLabels = {
+        const actionLabels = {  
           delete: "dihapus",
           add: "ditambahkan",
           update: "diperbarui"
         };
-        
+
         const formattedFiles = data.map(file => `${file.title} (${actionLabels[file.action] || 'diproses'})`);
-        
-        const output = formattedFiles.length > 1
-          ? formattedFiles.slice(0, -1).join(', ') + ' dan ' + formattedFiles.slice(-1)
-          : formattedFiles[0] || '';
-  
-        return output;
+
+        if (formattedFiles.length > 3) {
+          const displayed = formattedFiles.slice(0, 3).join(', ');
+          return `${displayed} dan ${formattedFiles.length - 3} lainnya`;
+        } else {
+          return formattedFiles.length > 1
+            ? formattedFiles.slice(0, -1).join(', ') + ' dan ' + formattedFiles.slice(-1)
+            : formattedFiles[0] || '';
+        }
       } else {
         return "";
       }

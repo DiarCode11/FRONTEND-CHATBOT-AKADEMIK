@@ -254,7 +254,6 @@ export default {
                     </tr>
                   </tbody>
                 </table>
-
               </div>
               <div v-if="chunks_data == false" class="flex justify-center items-center py-10 md:py-32 px-10 text-center">
                 <p class="text-gray-400">Data tidak ditemukan, mohon tambahkan konfigurasi untuk membuat database vektor yang baru</p>
