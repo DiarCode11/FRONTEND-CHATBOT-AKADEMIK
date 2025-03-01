@@ -28,6 +28,8 @@
                     type="text"
                     v-model="desc"
                     class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:outline-none"
+                    placeholder="Deskripsi dokumen"
+                    :disabled="isLoading"
                 />
             </div>
             <div class="mb-4">
@@ -38,6 +40,8 @@
                     inputmode="numeric"
                     v-model="year"
                     class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:outline-none"
+                    placeholder="Tahun dokumen"
+                    :disabled="isLoading"
                 />
             </div>
             <div @click.self="triggerFileInput" class="border-dashed border-2 border-slate-400 p-4 rounded-lg flex flex-col items-center cursor-pointer">
@@ -63,13 +67,17 @@
                     @change="handleAddFile"
                     accept=".pdf"
                     class="hidden"
+                    :disabled="isLoading"
                 />
                 <div class="w-full px-5 font-semibold text-slate-400 flex justify-center">
                     <p v-if="selectedFile == null">Pilih File</p>
                 </div>
             </div>
-            <button type="submit" class="bg-sky-500 w-full mt-6 py-2 rounded-md text-white font-semibold">
-                Submit
+            <button type="submit" :class="[isLoading ? 'cursor-not-allowed bg-gray-500' : 'cursor-pointer bg-sky-500 ']" class="w-full mt-6 py-2 h-12 rounded-md text-white font-semibold">
+              <div v-if="isLoading" class="w-full h-full justify-center flex items-center">
+                <span class="lds-dual-ring text-white inset-0 flex justify-center items-center"></span>
+              </div>
+              <div v-else>Submit</div>
             </button>
         </form>
     </Modal>
@@ -101,6 +109,7 @@
                     type="text"
                     v-model="dataEdited.description"
                     class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:outline-none"
+                    :disabled="isLoading"
                 />
             </div>
             <div class="mb-4">
@@ -111,6 +120,7 @@
                     inputmode="numeric"
                     v-model="dataEdited.year"
                     class="w-full px-4 py-2 rounded-lg border-2 border-gray-300 focus:outline-none"
+                    :disabled="isLoading"
                 />
             </div>
             <div @click.self="triggerFileInput" class="border-dashed border-2 border-slate-400 p-4 rounded-lg flex flex-col items-center cursor-pointer">
@@ -139,13 +149,17 @@
                     @change="handleAddFile"
                     accept=".pdf"
                     class="hidden"
+                    :disabled="isLoading"
                 />
                 <div class="w-full px-5 font-semibold text-slate-400 flex justify-center">
                     <p v-if="selectedFile == null">Pilih File</p>
                 </div>
             </div>
-            <button type="submit" class="bg-sky-500 w-full mt-6 py-2 rounded-md text-white font-semibold">
-                Submit
+            <button :class="[isLoading ? 'bg-gray-500' : 'bg-sky-500']" type="submit" class=" w-full mt-6 py-2 rounded-md text-white font-semibold">
+              <div v-if="isLoading" class="w-full h-full justify-center flex items-center">
+                <span class="lds-dual-ring text-white inset-0 flex justify-center items-center"></span>
+              </div>
+              <div v-else>Submit</div>
             </button>
         </form>
     </Modal>
@@ -351,7 +365,8 @@ export default {
       successMessage: "",
       search_query: "",
       not_updated_pdf: "",
-      showWarningAlert: false
+      showWarningAlert: false,
+      isLoading: false
     };
   },
   async created() {
@@ -436,6 +451,7 @@ export default {
       formData.append("year", this.year);
 
       try {
+        this.isLoading = true;
         const response = await fetch(this.ipAddress + "/datasets/pdf", {
           method: 'POST',
           headers: {
@@ -446,6 +462,8 @@ export default {
         });
 
         const data_json = await response.json();
+
+        this.isLoading = false;
 
         console.log("Response server saat mengambil data JSON: ", data_json);
 
@@ -478,6 +496,7 @@ export default {
       formData.append("year", this.dataEdited.year);
 
       try {
+        this.isLoading = true;
         const response = await fetch(this.ipAddress + "/datasets/pdf/" + this.dataEdited.id, {
           method: 'PATCH',
           headers: {
@@ -488,6 +507,8 @@ export default {
         });
 
         const data_json = await response.json();
+
+        this.isLoading = false;
 
         console.log("Response server saat mengambil data JSON: ", data_json);
 
@@ -683,5 +704,31 @@ table thead tr {
   49.99%{transform:scaleY(1)  rotate(135deg)}
   50%   {transform:scaleY(-1) rotate(0deg)}
   100%  {transform:scaleY(-1) rotate(-135deg)}
+}
+
+.lds-dual-ring,
+.lds-dual-ring:after {
+  box-sizing: border-box;
+}
+.lds-dual-ring {
+  display: inline-block;
+}
+.lds-dual-ring:after {
+  content: " ";
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid currentColor;
+  border-color: currentColor transparent currentColor transparent;
+  animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

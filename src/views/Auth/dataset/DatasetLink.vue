@@ -445,7 +445,8 @@ export default {
       successMessage: "",
       search_query: "",
       not_updated_url: "",
-      showWarningAlert: false
+      showWarningAlert: false,
+      isLoading: false
     };
   },
   async created() {
