@@ -494,7 +494,7 @@ export default {
         const response = await fetch(this.ipAddress + "/url-datasets/link", {
           method: "GET",
           headers: {
-            "X-CSRF-TOKEN": Cookies.get("csrf_access_token"),
+            "X-CSRF-TOKEN": sessionStorage.getItem("token")
           },
           credentials: "include",
         });
@@ -532,7 +532,7 @@ export default {
         const response = await fetch(this.ipAddress + "/url-datasets/link", {
           method: "POST",
           headers: {
-            "X-CSRF-TOKEN": Cookies.get("csrf_access_token"),
+            "X-CSRF-TOKEN": sessionStorage.getItem("token"),
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -577,7 +577,7 @@ export default {
           {
             method: "PATCH",
             headers: {
-              "X-CSRF-TOKEN": Cookies.get("csrf_access_token"),
+              "X-CSRF-TOKEN": sessionStorage.getItem("token"),
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
@@ -637,7 +637,7 @@ export default {
           {
             method: "DELETE",
             headers: {
-              "X-CSRF-TOKEN": Cookies.get("csrf_access_token"),
+              "X-CSRF-TOKEN": sessionStorage.getItem("token")
             },
             credentials: "include",
           }
@@ -675,7 +675,7 @@ export default {
           const response = await fetch(this.ipAddress + "/url-datasets/link/scrap", {
             method: "POST",
             headers: {
-              "X-CSRF-TOKEN": Cookies.get("csrf_access_token"),
+              "X-CSRF-TOKEN": sessionStorage.getItem("token"),
               "Content-Type": "application/json",
             },
             body: JSON.stringify({

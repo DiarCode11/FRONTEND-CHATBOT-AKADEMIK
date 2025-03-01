@@ -276,8 +276,6 @@ export default {
           if (response.ok) {
             // Jika login berhasil
             this.errorMessages = '';
-
-            console.log("Isi cookie: ", document.cookie)
             
             // Simpan ke session Storage
             sessionStorage.setItem('username', data.user.username);
@@ -289,7 +287,7 @@ export default {
             // Simpan data user ke localStorage
             // localStorage.setItem('akasha_data', JSON.stringify(data.user));
             console.log('Login berhasil:', data);
-            // window.location.reload();
+            window.location.reload();
             this.closeModal();
           } else {
             this.errorMessages = data['message'];
@@ -336,6 +334,13 @@ export default {
             // Jika login berhasil
             this.errorMessages = '';
             console.log('Register berhasil:', data);
+
+            // Simpan ke session Storage
+            sessionStorage.setItem('username', data.user.username);
+            sessionStorage.setItem('role', data.user.role);
+            sessionStorage.setItem('token', data.csrf_token);
+
+            this.loadUserAuthFromSession();
 
             // Simpan data ke Vuex
             this.$store.commit('setUserAuth', data.user);

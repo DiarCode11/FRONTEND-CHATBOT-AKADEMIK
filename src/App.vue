@@ -68,7 +68,7 @@ export default {
         const response = await fetch(this.ipAddress + "/users/auth", {
           method: 'GET',
           headers: {
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token")
           },
           credentials: 'include',
         });
@@ -80,12 +80,7 @@ export default {
           this.role = data.role;
           sessionStorage.setItem("username", data.username);
           sessionStorage.setItem("role", data.role);
-          
-          this.$nextTick(() => {
-              console.log("Isi userAuth setelah update:", this.$store.state.userAuth);
-          });
         } else {
-
           this.username = null;
           this.role = null;
           console.log(data);

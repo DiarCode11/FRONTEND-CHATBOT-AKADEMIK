@@ -184,7 +184,7 @@ export default {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token")
           },
           // body: JSON.stringify({
           //   email: this.email,

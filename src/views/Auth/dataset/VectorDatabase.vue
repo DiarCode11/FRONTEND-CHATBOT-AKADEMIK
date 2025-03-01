@@ -52,7 +52,7 @@ export default {
         const response = await fetch(this.ipAddress + "/vectordb/" + index, {
           method: 'GET',
           headers: {
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token"),
           },
           credentials: 'include',
         });
@@ -91,7 +91,7 @@ export default {
         const response = await fetch(this.ipAddress + "/vectordb/generate", {
           method: 'POST',
           headers: {
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token"),
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({

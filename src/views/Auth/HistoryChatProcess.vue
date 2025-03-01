@@ -335,7 +335,7 @@ export default {
                 const response = await fetch(this.ipAddress + "/chat-history/setting", {
                     method: 'GET',
                     headers: {
-                        'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+                        'X-CSRF-TOKEN': sessionStorage.getItem("token")
                     },
                     credentials: 'include',
                 });
@@ -360,7 +360,7 @@ export default {
                 const response = await fetch(this.ipAddress + "/chat-history/chat?page=1", {
                     method: 'GET',
                     headers: {
-                        'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+                        'X-CSRF-TOKEN': sessionStorage.getItem("token")
                     },
                     credentials: 'include',
                 });
@@ -387,7 +387,7 @@ export default {
                 const response = await fetch(this.ipAddress + "/chat-history/chat?page=" + page, {
                     method: 'GET',
                     headers: {
-                        'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+                        'X-CSRF-TOKEN': sessionStorage.getItem("token")
                     },
                     credentials: 'include',
                 });
@@ -416,7 +416,7 @@ export default {
                 const response = await fetch(this.ipAddress + "/chat-history/setting", {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+                        'X-CSRF-TOKEN': sessionStorage.getItem("token"),
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({

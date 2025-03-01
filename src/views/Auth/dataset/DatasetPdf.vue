@@ -398,7 +398,7 @@ export default {
         const response = await fetch(this.ipAddress + "/datasets/pdf", {
           method: 'GET',
           headers: {
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token"),
           },
           credentials: 'include',
         });
@@ -439,7 +439,7 @@ export default {
         const response = await fetch(this.ipAddress + "/datasets/pdf", {
           method: 'POST',
           headers: {
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token"),
           },
           body: formData,
           credentials: 'include',
@@ -481,7 +481,7 @@ export default {
         const response = await fetch(this.ipAddress + "/datasets/pdf/" + this.dataEdited.id, {
           method: 'PATCH',
           headers: {
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token"),
           },
           body: formData,
           credentials: 'include',
@@ -529,7 +529,7 @@ export default {
         const response = await fetch(this.ipAddress + "/datasets/pdf/" + this.dataDeleted.id, {
           method: 'DELETE',
           headers: {
-            'X-CSRF-TOKEN': Cookies.get("csrf_access_token"),
+            'X-CSRF-TOKEN': sessionStorage.getItem("token"),
           },
           credentials: 'include',
         });
