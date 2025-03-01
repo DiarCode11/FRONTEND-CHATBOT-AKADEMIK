@@ -210,20 +210,25 @@ export default {
       // Konversi semua data yang terkumpul ke HTML menggunakan marked
       
       // Konversi ke tag <b> jika ada ** di dalam teks
-        const htmlText = this.response
-        .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" class="bg-gray-500 text-white font-mono px-2 rounded-xl hover:bg-gray-600">$1</a>');
-        
-        const htmlMarked = md.render(htmlText);
+      const htmlText = this.response
+      .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" class="bg-gray-500 text-white font-mono px-2 rounded-xl hover:bg-gray-600">$1</a>');
+      
+      const htmlMarked = md.render(htmlText);
 
       // const htmlMarked = marked(this.response);
       console.log("Ini hasil markdownnya:", this.response);
 
       // Perbarui pesan terakhir dengan hasil HTML
       if (this.response.length > 0) {
-        this.chats[this.chats.length - 1].bot_message.isTyping = true;
-        // this.chats[this.chats.length - 1].bot_message.content = htmlMarked;
-        this.chats[this.chats.length - 1].bot_message.content = htmlText;
+        if (this.chats.length == 0) {
+          this.chats[0].bot_message.isTyping = true;
+          this.chats[0].bot_message.content = htmlText;
+        } else {
+          this.chats[this.chats.length - 1].bot_message.isTyping = true;
+          // this.chats[this.chats.length - 1].bot_message.content = htmlMarked;
+          this.chats[this.chats.length - 1].bot_message.content = htmlText;
+        }
       }
 
       if (!json.isTyping) {

@@ -5,7 +5,10 @@ const store = createStore({
     state: {
         userCount: 0,
         isConnected: false,
-        userAuth: {},
+        userAuth: {
+            username: sessionStorage.getItem("username") || null,
+            role: sessionStorage.getItem("role") || null
+        },
         totalChat: 0
     },
     mutations: {
@@ -16,23 +19,22 @@ const store = createStore({
             state.isConnected = isConnected;
         },
         setUserAuth(state, userAuth) {
-            state.userAuth = userAuth;
+            Object.assign(state.userAuth, userAuth);
         },
         clearUserAuth(state) {
-            state.userAuth = {};
+            state.userAuth = { id: "", username: "", role: "" };
         },
         setTotalChat(state, totalChat) {
             state.totalChat = totalChat;
         }
     },
     actions: {
-        loadUserAuthFromCookies({ commit }) {
-            const username = Cookies.get("username");
-            const role = Cookies.get("role");
-            const csrf_token = Cookies.get("csrf_access_token");
+        loadUserAuthFromSession({ commit }) {
+            const username = sessionStorage.getItem("username");
+            const role = sessionStorage.getItem("role");
 
             if (username && role) {
-                commit("setUserAuth", { username, role, csrf_token });
+                commit('')
             }
         }
     }

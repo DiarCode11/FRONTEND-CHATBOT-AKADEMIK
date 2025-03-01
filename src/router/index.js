@@ -73,8 +73,7 @@ const routes =[
                 component: FeedbackView
             }
         ]
-    }
-    ,
+    },
     {
         path: '/:pathMatch(.*)*',
         name: 'NotFound',

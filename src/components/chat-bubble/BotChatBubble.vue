@@ -34,10 +34,10 @@
           ></div>
         </div>
       </div>
-      <div v-if="showAction" class="flex gap-3">
+      <!-- <div v-if="showAction" class="flex gap-3">
         <LikeButton :size="6" :isActive="isLikeActive" :activeColor="`text-blue-500`" inactiveColor="text-slate-500 w-6" @click="toggleLike()"/>
         <DislikeButton :size="6" :isActive="isDislikeActive" :activeColor="`text-blue-500`" inactiveColor="text-slate-500 w-6" @click="toggleDislike()"/>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>

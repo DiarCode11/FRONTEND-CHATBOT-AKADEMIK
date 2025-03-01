@@ -39,7 +39,7 @@
           <BarButton />
         </div>
         <div class="hidden md:flex">
-          <img :src="logoImage" class="h-14" alt="">
+          <img :src="logoImage" class="h-11" alt="">
         </div>
         <div class="hidden md:flex space-x-4">
           <router-link
@@ -50,7 +50,7 @@
             to="/about"
             :class="{ 'font-bold transition-all duration-300 ease-in-out': isNavActive('/about') }"
           >About</router-link>
-          <router-link v-if="role === 'admin' && csrf_token"
+          <router-link v-if="role === 'admin'"
             to="/admin"
             :class="{ 'font-bold transition-all duration-300 ease-in-out': $route.path.startsWith('/admin') }"
           >Administrator</router-link>
@@ -63,7 +63,7 @@
             Masuk
           </button>
         </div>
-        <div v-else class="relative">
+        <div v-else-if="username && role" class="relative">
           <transition name="scale">
             <div v-show="showPopupUser" ref="popupContainer" class="absolute top-10 right-0 z-50 bg-white shadow-md rounded-lg border w-56 p-4">
               <div>
@@ -98,7 +98,6 @@
       @update:email="updateEmail"
       @update:password="updatePassword"
       @update:confirmPassword="updateConfirmPassword"
-      @submit="handleLogin"
     />
 </template>
 
@@ -126,21 +125,16 @@ export default {
       ipAddress: import.meta.env.VITE_SERVER_URL
     };
   },
+  props: {
+    username: String,
+    role: String
+  },
   components: {
     LoginModal,
     BarButton,
     CloseButton
   },
-  computed: {
-    ...mapState({
-      username: state => state.userAuth.username,
-      role: state => state.userAuth.role,
-      csrf_token: state => state.userAuth.csrf_token
-    })
-  },
   mounted() {
-    this.loadUserAuthFromCookies();
-
     window.addEventListener("scroll", this.handleScroll);
     document.addEventListener("click", this.closePopup);
   },
@@ -148,8 +142,10 @@ export default {
     window.removeEventListener("scroll", this.handleScroll);
     document.removeEventListener("click", this.closePopup);
   },
+  computed: {
+    ...mapState(['userAuth']),
+  },
   methods: {
-    ...mapActions(["loadUserAuthFromCookies"]),
     removeAllCookies() {
       const allCookies = Cookies.get(); // Ambil semua cookie
       for (let cookie in allCookies) {
@@ -169,11 +165,12 @@ export default {
         });
         
         this.removeAllCookies();
+        sessionStorage.clear();
 
         const data = await response.json();
         console.log(this.csrf_token);
         console.log(data);
-        this.$store.commit("setUserAuth", {});
+        this.$store.commit("clearUserAuth");
       }
       catch (error) {
         console.error(error);
