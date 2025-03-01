@@ -153,12 +153,12 @@ export default {
       }
     },
     async handleLogout() {
-      this.removeAllCookies();
       sessionStorage.clear();
       this.$store.commit("clearUserAuth");
-      
+
       try {
         console.log("mencoba logout")
+        console.log(Cookies.get("csrf_access_token"));
         const response = await fetch(this.ipAddress + "/users/logout", {
           method: 'POST',
           headers: {
