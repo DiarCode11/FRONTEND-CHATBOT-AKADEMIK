@@ -167,7 +167,7 @@ export default {
     },        
     handleEnterKeydown(event) {
       // Cek jika tombol Enter ditekan, dan Shift tidak ditekan
-      if (event.key === 'Enter' && !event.shiftKey) {
+      if (event.key === 'Enter' && !event.shiftKey && !this.disableChatbox) {
         event.preventDefault();  // Mencegah Enter membuat baris baru
         this.submitQuestion();  // Kirim pesan
       }
@@ -319,8 +319,7 @@ export default {
     <!-- <div class="fixed bg-white/20 h-full w-full top-0 left-0 z-40"></div> -->
     <footer class="max-w-4xl w-full mx-auto px-2  flex items-center pt-3 mt-10 fixed bottom-0 left-0 right-0">
     <div
-      class="flex justify-center items-end gap-2 md:gap-3 w-full shadow-sm"
-      :class="[disableChatbox ? 'bg-gray-200' : 'bg-white']"
+      class="flex justify-center items-end gap-2 md:gap-3 w-full shadow-sm bg-white"
     >
       <div class="w-full relative pb-4">
         <!-- Input Textarea -->
@@ -330,33 +329,55 @@ export default {
             id="message"
             class="resize-none w-full px-4 py-2 border-l border-t border-r h-10 border-gray-300 text-black rounded-tl-3xl rounded-tr-3xl focus:outline-none text-base overflow-y-auto absolute bottom-0 left-0"
             placeholder="Ketik pertanyaanmu..."
+            :class="[ disableChatbox ? 'cursor-not-allowed' : 'cursor-text' ]"
+            :disabled="disableChatbox"
             :style="{ height: textareaHeight + 'px', maxHeight: maxHeight + 'px' }"
             rows="1"
             @input="autoResize"
             @keydown.enter="handleEnterKeydown"
-            :disabled="disableChatbox"
           ></textarea>
         </div>
 
-        <div class="flex justify-between border-b border-l border-r border-gray-300 rounded-b-3xl px-3 pb-3 pt-1">
-          <!-- Tombol Menu -->
-          <button
-            @click.stop="toggleDeleteChatModal()"
-            class="z-10 relative flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
-            aria-label="Kirim"
-          >
-            <!-- Icon Close -->
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-              <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-            </svg>
-          </button>
+        <div class="flex justify-between border-b border-l border-r border-gray-300 rounded-b-3xl px-3 pb-3 pt-1"
+          :class="[ disableChatbox ? 'bg-gray-200' : '']"
+        >
+          <div class="relative z-10">
+            <!-- Popup Modal -->
+            <transition name="fade">
+              <div v-show="deleteChatModalStatus" ref="deleteChatModal" class="bg-white flex-col rounded-xl shadow-lg shadow-gray-500 border w-40 bottom-10 left-0 z-20 absolute text-white flex justify-center items-center">
+                <div class="w-4/5 py-4 gap-y-1 flex flex-col">
+                  <a href="https://undiksha.ac.id" target="_blank" rel="noopener noreferrer" @click="handleExplore()" class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full text-center">
+                    Eksplore
+                  </a>
+                  <button @click="handleDeleteChat()" class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full text-center">
+                    Hapus Chat
+                  </button>
+                </div>
+              </div>
+            </transition>
 
+            <button
+              @click.stop="toggleDeleteChatModal()"
+              class="z-10 relative flex items-end justify-center p-2  text-white rounded-full shadow-md"
+              aria-label="Kirim"
+              :disabled="disableChatbox"
+              :class="[ disableChatbox ? 'bg-slate-400' : 'bg-sky-600 hover:bg-sky-700 focus:ring-2 focus:ring-sky-600' ]"
+            >
+              <!-- Icon Close-->
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+              </svg>
+
+              <!-- Icon Open -->
+            </button>
+          </div>
           <!-- Tombol Kirim -->
           <button
             @click="submitQuestion"
-            class="flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
+            class="flex items-end justify-center p-2 text-white rounded-full shadow-md  focus:ring-2 focus:ring-sky-600"
             aria-label="Kirim"
             :disabled="disableChatbox"
+            :class="[ disableChatbox ? 'bg-slate-400 cursor-not-allowed' : 'bg-sky-600 hover:bg-sky-700' ]"
           >
             <!-- Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
@@ -372,8 +393,7 @@ export default {
 
 <style scoped>
 textarea:disabled {
-  background-color: #f0f0f0; /* Warna latar belakang yang lebih terang */
-  border-color: #f0f0f0; /* Border yang lebih terang */
+  background-color: oklch(0.928 0.006 264.531); /* Warna latar belakang yang lebih terang */
   color: #f0f0f0; /* Teks yang lebih gelap */
   cursor: not-allowed; /* Mengubah kursor menjadi tanda tidak diizinkan */
 }
