@@ -27,7 +27,7 @@
           <!-- Menambahkan kelas untuk membatasi panjang bubble dan menangani teks panjang -->
           <div
             v-html="message"
-            class="text-gray-600 text-sm lg:text-base pr-1 max-w-full overflow-hidden font-montserrat"
+            class="text-gray-600 text-sm lg:text-base pr-1 max-w-full overflow-hidden font-montserrat text-wrap "
             :class="{
               'loader': message === ''
             }"

@@ -1,0 +1,7 @@
+version: '3.8'
+services:
+  vue-preview:
+    build: .
+    container_name: akasha_frontend_vue
+    ports:
+      - "5002:5002"
