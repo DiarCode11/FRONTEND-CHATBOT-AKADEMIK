@@ -14,4 +14,4 @@ RUN npm install -g vite
 EXPOSE 5002
 
 # Jalankan server preview
-CMD ["vite", "preview", "--host"]
+CMD ["vite", "preview", "--host", "0.0.0.0", "--port", "5002"]
