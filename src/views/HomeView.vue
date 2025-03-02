@@ -46,10 +46,18 @@ export default {
         disableChatbox: false,
         questionFromChild: '',
         email: '',
-        password: ''
+        password: '',
+        textareaHeight: 40, // Tinggi awal (1 baris)
+        maxHeight: 80, // Maksimum 3 baris (sekitar 80px)
     };
   },
   methods:{
+    autoResize(event) {
+      const textarea = event.target;
+      textarea.style.height = "auto"; // Reset tinggi sebelum dihitung ulang
+      const newHeight = Math.min(textarea.scrollHeight, this.maxHeight); // Maksimal 3 baris
+      this.textareaHeight = newHeight;
+    },
     handleQuestionSelected(question) {
       this.question = question;
       this.submitQuestion();
@@ -273,7 +281,7 @@ export default {
 
 <template>
     <!-- Untuk menampung page Home -->
-    <div class="bottom-0 left-0 right-0 flex-gro  h-screen">
+    <div class="bottom-0 left-0 right-0 flex-grow  h-screen">
       <div class="min-h-screen">
         <!-- Container responsif -->
         <div class="max-w-4xl w-full mx-auto px-2 lg:px-8 h-full flex flex-col items-center pt-3 mt-10">
@@ -309,66 +317,56 @@ export default {
 
     <!-- Fixed Footer -->
     <!-- <div class="fixed bg-white/20 h-full w-full top-0 left-0 z-40"></div> -->
-    <div class="fixed bottom-0 left-0 right-0 bg-blue-200 text-white p-3 text-center">
-      <div class="flex justify-center items-center gap-2 md:gap-3">
-        <!-- Menu -->
-        <div class="relative z-10">
+    <footer class="max-w-4xl w-full mx-auto px-2  flex items-center pt-3 mt-10 fixed bottom-0 left-0 right-0">
+    <div
+      class="flex justify-center items-end gap-2 md:gap-3 w-full shadow-sm"
+      :class="[disableChatbox ? 'bg-gray-200' : 'bg-white']"
+    >
+      <div class="w-full relative pb-4">
+        <!-- Input Textarea -->
+        <div class="w-full rounded-xl lg:rounded-3xl relative">
+          <textarea
+            v-model="question"
+            id="message"
+            class="resize-none w-full px-4 py-2 border-l border-t border-r h-10 border-gray-300 text-black rounded-tl-3xl rounded-tr-3xl focus:outline-none text-base overflow-y-auto absolute bottom-0 left-0"
+            placeholder="Ketik pertanyaanmu..."
+            :style="{ height: textareaHeight + 'px', maxHeight: maxHeight + 'px' }"
+            rows="1"
+            @input="autoResize"
+            @keydown.enter="handleEnterKeydown"
+            :disabled="disableChatbox"
+          ></textarea>
+        </div>
 
-          <!-- Popup Modal -->
-          <transition name="fade">
-            <div v-show="deleteChatModalStatus" ref="deleteChatModal" class="bg-white flex-col rounded-xl shadow-lg shadow-gray-500 border w-40 bottom-10 left-0 z-20 absolute flex justify-center items-center">
-              <div class="w-4/5 py-4 gap-y-1 flex flex-col">
-                <a href="https://undiksha.ac.id" target="_blank" rel="noopener noreferrer" @click="handleExplore()" class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
-                  Eksplore
-                </a>
-                <button @click="handleDeleteChat()" class="bg-sky-600 px-4 py-2 text-sm rounded-md w-full">
-                  Hapus Chat
-                </button>
-              </div>
-            </div>
-          </transition>
-
+        <div class="flex justify-between border-b border-l border-r border-gray-300 rounded-b-3xl px-3 pb-3 pt-1">
+          <!-- Tombol Menu -->
           <button
             @click.stop="toggleDeleteChatModal()"
             class="z-10 relative flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
             aria-label="Kirim"
           >
-            <!-- Icon Close-->
+            <!-- Icon Close -->
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
               <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
             </svg>
+          </button>
 
-            <!-- Icon Open -->
+          <!-- Tombol Kirim -->
+          <button
+            @click="submitQuestion"
+            class="flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
+            aria-label="Kirim"
+            :disabled="disableChatbox"
+          >
+            <!-- Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+            </svg>
           </button>
         </div>
-
-        <!-- Input Textarea -->
-        <div class="w-full rounded-xl lg:rounded-3xl lg:max-w-[60%]">
-          <textarea
-            v-model="question"
-            id="message"
-            class="resize-none w-full p-2 text-black rounded-xl border-white border-4 focus:outline-none text-base overflow-hidden"
-            placeholder="Ketik pertanyaanmu..."
-            style="line-height: 1.2rem; max-height: 4rem;" 
-            @keydown="handleEnterKeydown"
-            :disabled="disableChatbox"
-          ></textarea>
-        </div>
-
-        <!-- Submit Button -->
-        <button
-          @click="submitQuestion"
-          class="flex items-end justify-center p-2 bg-sky-600 text-white rounded-full shadow-md hover:bg-sky-700 focus:ring-2 focus:ring-sky-600"
-          aria-label="Kirim"
-          :disabled="disableChatbox"
-        >
-          <!-- Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
-          </svg>
-        </button>
       </div>
     </div>
+  </footer>
 
 </template>
 
