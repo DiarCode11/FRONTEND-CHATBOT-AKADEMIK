@@ -48,10 +48,25 @@ export default {
         email: '',
         password: '',
         textareaHeight: 40, // Tinggi awal (1 baris)
-        maxHeight: 80, // Maksimum 3 baris (sekitar 80px)
+        maxHeight: 80, // Maksimum 3 baris (sekitar 80px),
+        showChangeMode: false,
+        mode: ['Corrective-RAG', 'Naive-RAG'],
+        selectedMode: 'Corrective-RAG',
     };
   },
   methods:{
+    changeMode(mode) {
+      this.showChangeMode = false;
+      if (mode === 'Corrective-RAG') {
+        this.selectedMode = 'Corrective-RAG';
+      } else {
+        this.selectedMode = 'Naive-RAG';
+      }
+    },
+    handleMode() {
+      this.showChangeMode = !this.showChangeMode
+      this.deleteChatModalStatus = false
+    },
     autoResize(event) {
       const textarea = event.target;
       textarea.style.height = "auto"; // Reset tinggi sebelum dihitung ulang
@@ -74,6 +89,7 @@ export default {
       }
     },
     async submitQuestion() {
+      this.textareaHeight = 40
       console.log("Status koneksi: ", this.isConnectedStatus)
       // Cek apakah pertanyaan tidak kosong dan bukan hanya spasi
       if (this.question.trim()) {
@@ -152,7 +168,7 @@ export default {
         
         try {
           // Kirimkan pesan ke server
-          this.socket.emit('send_message', {"message": questionToSend});
+          this.socket.emit('send_message', {"message": questionToSend, "mode": this.selectedMode});
           const botMessageIndex = this.chats.length - 1;
           this.chats[botMessageIndex].bot_message.isTyping = true; // Reset teks pesan bot
           this.disableChatbox = true; // Menonaktifkan textarea selama bot mengetik
@@ -175,6 +191,7 @@ export default {
     },
     toggleDeleteChatModal() {
       this.deleteChatModalStatus = !this.deleteChatModalStatus
+      this.showChangeMode = false;
       console.log(this.deleteChatModalStatus)
     },
     closeDeleteChatModal() {
@@ -193,11 +210,17 @@ export default {
       if (this.$refs.deleteChatModal && !this.$refs.deleteChatModal.contains(event.target)) {
         this.deleteChatModalStatus = false
       }
+    },
+    closeModeModal(event) {
+      if (this.$refs.showMode && !this.$refs.showMode.contains(event.target)) {
+        this.showChangeMode = false;
+      }
     }
   },
   mounted() {
     // Tutup modal jika diklik di luar modal
     document.addEventListener('click', this.closeDeleteChatModal);
+    document.addEventListener('click', this.closeModeModal)
 
     // Ambil data dari Local
     const storedChatData = localStorage.getItem('chatData')
@@ -327,7 +350,7 @@ export default {
           <textarea
             v-model="question"
             id="message"
-            class="resize-none w-full px-4 py-2 border-l border-t border-r h-10 border-gray-300 text-black rounded-tl-3xl rounded-tr-3xl focus:outline-none text-base overflow-y-auto absolute bottom-0 left-0"
+            class="resize-none w-full px-4 py-2 overflow-y-hidden border-l border-t border-r h-10 border-gray-300 text-black rounded-tl-3xl rounded-tr-3xl focus:outline-none text-base absolute bottom-0 left-0"
             placeholder="Ketik pertanyaanmu..."
             :class="[ disableChatbox ? 'cursor-not-allowed' : 'cursor-text' ]"
             :disabled="disableChatbox"
@@ -338,7 +361,7 @@ export default {
           ></textarea>
         </div>
 
-        <div class="flex justify-between border-b border-l border-r border-gray-300 rounded-b-3xl px-3 pb-3 pt-1"
+        <div class="flex justify-between border-b border-l border-r border-gray-300 rounded-b-3xl px-3 py-3"
           :class="[ disableChatbox ? 'bg-gray-200' : '']"
         >
           <div class="relative z-10">
@@ -356,20 +379,47 @@ export default {
               </div>
             </transition>
 
-            <button
-              @click.stop="toggleDeleteChatModal()"
-              class="z-10 relative flex items-end justify-center p-2  text-white rounded-full shadow-md"
-              aria-label="Kirim"
-              :disabled="disableChatbox"
-              :class="[ disableChatbox ? 'bg-slate-400' : 'bg-sky-600 hover:bg-sky-700 focus:ring-2 focus:ring-sky-600' ]"
-            >
-              <!-- Icon Close-->
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-              </svg>
+            <div class="flex gap-x-4">
+              <button
+                @click.stop="toggleDeleteChatModal()"
+                class="z-10 relative flex items-end justify-center p-2  text-white rounded-full shadow-md"
+                aria-label="Kirim"
+                :disabled="disableChatbox"
+                :class="[ disableChatbox ? 'bg-slate-400' : 'bg-sky-600 hover:bg-sky-700 focus:ring-2 focus:ring-sky-600' ]"
+              >
+                <!-- Icon Close-->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
+                  <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                </svg>
+                <!-- Icon Open -->
+              </button>
 
-              <!-- Icon Open -->
-            </button>
+              <div class="relative">
+                <transition name="fade">
+                  <div v-show="showChangeMode" ref="showMode" class="bg-white flex-col rounded-xl shadow-lg shadow-gray-500 border w-48 bottom-10 left-0 z-20 absolute text-white flex justify-center items-center">
+                    <h1 class="font-bold text-black text-start w-full px-4 pt-4">Pilih Mode</h1>
+                    <div class="w-full pb-4 px-4 pt-2 gap-y-1 flex flex-col text-black">
+                      <button @click="changeMode(mode)" v-for="mode in mode" :key="mode" class="w-full relative text-start text-sm hover:bg-sky-600 px-1 rounded-lg hover:text-white">
+                      {{ mode }}
+                        <span v-if="mode === selectedMode" class="absolute right-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </transition>
+                <button @click.stop="handleMode" :disabled="disableChatbox" class="text-gray-600 font-bold flex items-center gap-x-2 h-full">
+                  <p class="underline">{{ selectedMode }}</p>
+                  <span class="transition-transform ease-in-out duration-300" :class="{ 'rotate-180': showChangeMode }">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
           </div>
           <!-- Tombol Kirim -->
           <button

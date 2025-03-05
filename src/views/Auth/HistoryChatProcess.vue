@@ -16,7 +16,7 @@
                 <div>
                     <h2 class="font-semibold ">Pertanyaan Asli</h2>
                     <textarea readonly class="w-full h-20 bg-slate-100 shadow resize-none text-md focus:outline-none p-4  border-gray-500 rounded-lg"
-                    :value="questionSelected.expansion_result">
+                    :value="[questionSelected.expansion_result ? questionSelected.expansion_result : questionSelected.question]">
                     </textarea>
                 </div>
                 <div class="py-4">
@@ -128,26 +128,32 @@
                 <table v-if="showChatHistory" class="min-w-full w-max bg-white" id="chat-history-table">
                   <thead>
                     <tr class="bg-gray-200 text-gray-600 uppercase text-xs">
-                      <th class="py-3 px-6 text-left">No</th>
-                      <th class="py-3 px-6 text-left">Question</th>
-                      <th class="py-3 px-6 text-left">Query Expansion Agent</th>
-                      <th class="py-3 px-6 text-left">Retrieval Agent </th>
-                      <th class="py-3 px-6 text-left">Corrective Agent</th>
-                      <th class="py-3 px-6 text-left">Generator Agent</th>
-                      <th class="py-3 px-6 text-left">Time</th>
+                      <th class="py-3 px-6 text-center">No</th>
+                      <th class="py-3 px-6 text-center">Mode</th>
+                      <th class="py-3 px-6 text-center">Question</th>
+                      <th class="py-3 px-6 text-center">Query Expansion</th>
+                      <th class="py-3 px-6 text-center">Retrieval</th>
+                      <th class="py-3 px-6 text-center">Corrective</th>
+                      <th class="py-3 px-6 text-center">Generation</th>
+                      <th class="py-3 px-6 text-center">Time</th>
                     </tr>
                   </thead>
                   <tbody class="text-gray-600 text-xs">
                     <tr v-for="(data, index) in chatHistoryData" :key="index" class="border-b">
                       <td class="py-3 px-6 text-left">{{ (current_page - 1) * items_per_page + index + 1 }}</td>
+                      <td>
+                        <span v-if="data.expansion_result === null ">Naive-RAG</span>
+                        <span v-else>Corrective-RAG</span>
+                      </td>
                       <td class="py-3 px-6 text-left">
                         <div class="w-32 overflow-hidden text-wrap text-ellipsis">
                           {{ data.question }}
                         </div>
                       </td>
                       <!-- {{ /*file.filename.length > 20 ? file.filename.substring(0, 20) + "..." : file.filename*/ file.filename  }}</td> -->
-                      <td class="py-3 px-6 text-left w-48">
-                        {{ data.expansion_result }}
+                      <td class="py-3 px-6 text-center w-48 ">
+                        <p v-if="data.expansion_result" class="text-left">{{ data.expansion_result }}</p>
+                        <span v-else>-----</span>
                       </td>
                       <td>
                         <div class="w-32 overflow-hidden text-wrap text-ellipsis">
@@ -158,9 +164,10 @@
                       </td>
                       <td>
                         <div class="w-32 overflow-hidden text-wrap text-ellipsis">
-                          <button @click="showCorrectiveModal(data)" class="bg-sky-500 hover:scale-110 transition-all ease-in-out duration-200 text-white rounded-md w-20 py-1">
+                          <button v-if="data.expansion_result" @click="showCorrectiveModal(data)" class="bg-sky-500 hover:scale-110 transition-all ease-in-out duration-200 text-white rounded-md w-20 py-1">
                             Lihat Detail
                           </button>
+                          <span v-else>-----</span>
                         </div>
                       </td>
                       <td>
