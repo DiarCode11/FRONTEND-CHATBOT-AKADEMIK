@@ -33,7 +33,7 @@
                             <th class="py-3 px-6 text-left">No</th>
                             <th class="py-3 px-6 text-left">Chunk</th>
                             <th class="py-3 px-6 text-left">Vektor</th>
-                            <th class="py-3 px-6 text-left">Score</th>
+                            <th class="py-3 px-6 text-left">Jarak Euclidean</th>
                         </tr>
                     </thead>
                     <tbody>
