@@ -54,10 +54,10 @@
         </span>
       </div>
       <div class="my-3">
-          <label for="embedder" class="block">Role</label>
+          <label for="role" class="block">Role</label>
           <div class="relative">
             <div @click.stop="toggleRoleModal" :class="[!selectedRole ? 'text-gray-400' : '']" class="text-sm cursor-pointer  select-none w-full px-2 py-2 rounded-lg border-2 border-gray-300 focus:outline-none">
-              {{ selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1): "Pilih Embedder" }}
+              {{ selectedRole ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1): "Pilih role" }}
             </div>
             <transition name="fade-slide">
               <div v-if="isShowRoleModal === true" ref="roleModal" class="absolute left-1/2 bottom-10 -translate-x-1/2 transform  flex flex-col gap-2 w-full bg-white rounded-lg shadow-lg border px-2 py-3 text-sm">
@@ -122,6 +122,30 @@
 
     </form>
   </Modal>
+
+  <!-- Edit User Modal -->
+
+  <!-- Delete User Modal -->
+  <Modal v-model:showModal="isShowDeleteModal" :size="'sm'" :closeModal="closeModal">
+    <span class="text-red-600 flex justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-20">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+      </svg>
+      </span>
+    <h1 class="text-xl font-bold py-6 text-center">Hapus User</h1>
+    <p class="text-center text-gray-700">
+      Yakin ingin menghapus pengguna <strong>{{ data_deleted.username }}?</strong> Perubahan akan bersifat permanen
+    </p>
+    <div class="flex justify-center gap-7 pt-4">
+        <button @click="deleteUser(data_deleted.id)" class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-700 transition-all duration-500 ease-in-out hover:scale-105">
+            Yakin
+        </button>
+        <button @click="closeModal" class="bg-red-600 text-white px-6 py-2 rounded-lg hover:scale-105 transition-all duration-500 ease-in-out">
+            Batal
+        </button>
+    </div>
+  </Modal>
+
   <p class="text-sm text-gray-400">Admin /</p>
   <h1 class="text-xl font-bold pb-6">Dashboard</h1>
   <div class="grid md:grid-cols-4 gap-4 mb-5 grid-cols-2">
@@ -233,8 +257,8 @@
                 <td class="py-3 px-6 text-left">{{ user.role }}</td>
                 <td class="py-3 px-6 text-left">{{ user.created_at }}</td>
                 <td class="py-3 px-6 text-left flex gap-2">
-                  <EditButton @button-clicked="" />
-                  <DeleteButton @button-clicked="" />
+                  <!-- <EditButton @button-clicked="setDataEdited(file)"/> -->
+                  <DeleteButton @button-clicked="setDataDeleted(user)"/>
                 </td>
               </tr>
             </tbody>
@@ -315,6 +339,7 @@ export default {
       isLoading: false,
       errorMessages: "",
       search_query: "",
+      data_deleted: "",
       current_page: 1,
       items_per_page: 5,
       newDatasetTotal: 0,
@@ -365,6 +390,11 @@ export default {
     await this.getAllUsers();
   },
   methods: {
+    setDataDeleted(data){
+      console.log("Hapus data diklik")
+      this.data_deleted = data
+      this.isShowDeleteModal = true;
+    },
     closeModal() {
       console.log("Modal closed");
       this.isShowAddModal = false;
@@ -373,8 +403,10 @@ export default {
       this.password = "";
       this.confirmedPassword = "";
       this.isShowRoleModal = false;
+      this.isShowDeleteModal = false;
       this.selectedRole = "";
       this.errorMessages = "";
+      this.data_deleted = "";
     },
     toggleRoleModal() {
       this.isShowRoleModal = !this.isShowRoleModal;
@@ -414,6 +446,30 @@ export default {
           }
       } catch (error) {
           console.log(error);
+      }
+    },
+    async deleteUser(id) {
+      try {
+        const response = await fetch(this.ipAddress + "/users/delete/" + id, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRF-TOKEN': sessionStorage.getItem("token")
+          },
+          credentials: 'include',
+        });
+
+        const data_json = await response.json();
+
+        if (response.ok) {
+          this.allUsers = this.allUsers.filter(item => item.id !== this.data_deleted.id);
+          this.isShowDeleteModal = false;
+          console.log(data_json);
+        } else {
+          console.log("Error: ", data_json);
+        }
+
+      } catch (error) {
+        console.log(error);
       }
     },
     async createUserByAdmin() {

@@ -270,7 +270,7 @@
             :class="[isSettingChanges  ? 'bg-sky-500' : 'bg-gray-300' ]"
             :disabled="!isSettingChanges"
         >
-            Perbarui Dataset
+            Perbarui Konfigurasi
         </button>
       </div>
     </div>

@@ -47,6 +47,23 @@ export default {
     await this.getChunk(1)
   },
   methods: {
+    async downloadExcel() {
+      try {
+        const response = await fetch(this.ipAddress + "/vectordb/download");
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+  
+        link.href = url;
+        link.setAttribute('download', 'dataset.xlsx');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } catch (error) {
+        console.log("Download failed: ", error);
+      }
+    },
     async getChunk(index) {
       try {
         const response = await fetch(this.ipAddress + "/vectordb/" + index, {
@@ -220,7 +237,12 @@ export default {
             class="bg-gradient-to-r from-transparent to-white w-5 h-[calc(100%-120px)] absolute mt-10 right-0"
           ></span>
           <div class="w-full flex justify-between items-center px-6 pb-2 pt-7">
-            Total Chunk : {{ total_chunk }}
+            <div>Total Chunk : {{ total_chunk }}</div>
+            <button @click="downloadExcel" class="bg-green-600 text-white rounded-md py-1 px-2">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            </button>
           </div>
           <div class="pb-10">
             <div class="overflow-x-auto w-full">
